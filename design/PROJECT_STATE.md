@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 | --- | --- |
-| 当前设计版本 | REV1（D5-2 安全构件已落地；基线 REV0 = git `2bbe9e2`，工作分支 `improvement/rev1`） |
+| 当前设计版本 | REV2（D5-2 安全构件 + D2-A 槽形 D8 优化；基线 REV0 = git `2bbe9e2`，工作分支 `improvement/rev1`） |
 | 当前阶段 | G2 工程展开（D5-2 概念几何完成，选型受 ASM-1 阻塞） |
 | 改进对象 | `书签收纳盒-凸轮倾斜高级版.html`（构建产物） |
 | 权威源文件 | `advanced-kinematics.js`、`advanced-renderer.js`、`advanced-annotations.js`、`advanced-engineering-details.html`、`ui-template.html`、`scene.js`、`kinematics.js`、`annotations.js`、`lowbox-renderer.js`、`build-advanced.cjs` |
@@ -42,7 +42,7 @@
 | CHK | 脚本 | 结果 | 状态 |
 | --- | --- | --- | --- |
 | CHK-1 基础运动/膜卷几何 | `node verify-kinematics.cjs` | 运行成功，输出指标（卷径 28.64→29.84） | 指标无预设验收条件，PASS 判定缺失 |
-| CHK-2 高级槽曲线/压力角 | `node verify-advanced-kinematics.cjs` | 运行成功：压力角最大 46.52°，前罩间隙 3.16 mm，卷径 28.78→29.98 | 同上 |
+| CHK-2 高级槽曲线/压力角 | `node verify-advanced-kinematics.cjs` | REV2：压力角最大 42.31°（原 46.52°），中心线最小曲率半径 15.83 mm（原 10.73），内侧 10.68（原 5.58），前罩间隙 3.16 mm，卷径 28.78→29.98；6001 步运行成功 | 同上 |
 | CHK-3 装配包络/连接臂搭接 | `node verify-advanced-assembly.cjs` | 运行成功（5 纵筋、2 定向等断言通过） | 脚本自述非完整碰撞/载荷校核 |
 | CHK-4 后柔性罩干涉回归 | `node verify-rear-bellows.cjs` | 运行成功 | 同上 |
 
@@ -52,7 +52,7 @@
 
 | 编号 | 风险 | 等级 | 依据 |
 | --- | --- | --- | --- |
-| RSK-1 | 压力角 46.52° 偏大，凸轮槽对车架侧向载荷显著；整条受载路径（滚轮→曲柄→耳轴→车架→滑套→导杆）无载荷数据 | 高 | 工程说明自述"必须按实测总质量核算"；ASM-1 UNKNOWN |
+| RSK-1 | 压力角 42.31°（REV2 优化后，原 46.52°），凸轮槽侧向载荷仍显著；整条受载路径（滚轮→曲柄→耳轴→车架→滑套→导杆）无载荷数据 | 中（原高） | verify-advanced-kinematics REV2 输出；ASM-1 UNKNOWN 仍阻塞核算 |
 | RSK-2 | 升降无防坠/失电保持选型；REV1 已落地方案构件（抱闸/棘爪/挡块占位），选型与强度仍缺 | 高（阻塞实物） | design/VERIFICATION.md CHK-5…8；ASM-1 UNKNOWN |
 | RSK-3 | 校核脚本无验收条件与判定逻辑（REV1 新增脚本已带阈值，旧四项未改） | 中（流程） | CHK-1…4 实际输出 |
 | RSK-4 | 承托盒槽底剩余 2 mm、各 2 mm 让位边，刚度与制造公差未复核 | 中 | 工程说明自述 |

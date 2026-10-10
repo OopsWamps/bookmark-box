@@ -126,7 +126,7 @@
       </section>
 <details class="technical-dossier"><summary>展开机构说明与尺寸校核<span>方案选择、支承连接、凹槽与儿童防护</span></summary><p><a href="书签收纳盒-紧凑防护版.html">查看基础版</a> · <a href="高级版-方案评审.html">查看方案评审</a></p><section class="engineering-details" aria-labelledby="engineering-title">
   <h2 id="engineering-title">高级版 · 封闭凸轮槽滚轮联动</h2>
-  <p>采用已确认的<strong>封闭凸轮槽滚轮</strong>方案：沿用一套升降驱动，竖车架起升时，主侧滚轮沿固定槽板运行，使承托盒围绕前侧双耳轴自动倾至<strong>20°</strong>。先水平抬升18毫米，随后在余下42毫米行程中边升边倾；到位后才卷盖取用。四列书签增加独立定位凹槽、连续前侧与右侧基准边，并由后端及左侧一体软肋轻预压。</p>
+  <p>采用已确认的<strong>封闭凸轮槽滚轮</strong>方案：沿用一套升降驱动，竖车架起升时，主侧滚轮沿固定槽板运行，使承托盒围绕前侧双耳轴自动倾至<strong>20°</strong>。先水平抬升8毫米，随后在余下52毫米行程中边升边倾；到位后才卷盖取用。四列书签增加独立定位凹槽、连续前侧与右侧基准边，并由后端及左侧一体软肋轻预压。</p>
   <p>箱体闭合尺寸为<strong>300 × 222 × 110毫米</strong>，脚垫外露1毫米；完全展开最高约234毫米，含脚垫约235毫米。托盘、透明膜、卷盖电机、导辊与卷盒作为一个倾斜模块，丝杠、直线导向和竖车架仍按竖直运动布置。结构演示可检查运动与封装的空间关系，尚不能代替零件级CAD、公差、强度与实物安全验证。</p>
 
   <h3>机构取舍：成本、安全性与寿命</h3>
@@ -176,9 +176,9 @@
   </table>
 
   <h3>封闭槽曲线与载荷关注点</h3>
-  <p>前支点为P=(Y−82，Z100＋q)。滚轮中心由曲柄端点确定：<strong>Yc=−82＋65sinθ，Zc=100＋q−65cosθ</strong>。q≤18时θ=0；余下42毫米行程使用25%平滑升速、50%匀速、25%平滑降速的角度曲线，到顶时θ=20°。这是一条固定槽曲线，页面进程滑块用于观察动作，不代表实体增加独立调角能力。</p>
-  <p>采用该曲线的平面设计结果：槽中心线最小曲率半径约<strong>10.73毫米</strong>；主槽按半宽5.15毫米偏置后，内侧最小曲率半径约5.58毫米，名义曲线不出现偏置尖点。槽末端滚轮中心约(Y−59.77，Z98.92)，计入槽半宽与3毫米外侧槽壁，最高约107.07毫米，能布置在110毫米箱体内。</p>
-  <p>最大压力角约<strong>46.52°</strong>，因此槽轮会对车架产生明显侧向载荷。必须按实测总质量、重心、使用推力和摩擦核算滚轮接触应力、槽板刚度、曲柄弯曲、耳轴扭矩、导向承载与M1驱动余量。运动几何可实现并不等于强度或驱动能力已验证；若载荷核算不满足要求，应重新优化槽形或行程并评审。</p>
+  <p>前支点为P=(Y−82，Z100＋q)。滚轮中心由曲柄端点确定：<strong>Yc=−82＋65sinθ，Zc=100＋q−65cosθ</strong>。q≤8时θ=0；余下52毫米行程使用三段修正曲线——首末各占行程约16.7%的半余弦加减速段、中间约66.7%匀速段，峰值速度为平均值的约1.33倍，起止角速度与角加速度为零（按实现写入，早期文档中"25%/50%/25%"的表述与代码不符，已更正），到顶时θ=20°。这是一条固定槽曲线，页面进程滑块用于观察动作，不代表实体增加独立调角能力。平移段由18毫米压缩到8毫米：箱口几何允许的最小平移远小于此，压缩后压力角、槽曲率与加速度峰值同时改善（DEC-003，calc/cam-profile-compare.cjs）。</p>
+  <p>采用该曲线的平面设计结果：槽中心线最小曲率半径约<strong>15.83毫米</strong>；主槽按半宽5.15毫米偏置后，内侧最小曲率半径约10.68毫米，名义曲线不出现偏置尖点。槽末端滚轮中心约(Y−59.77，Z98.92)，计入槽半宽与3毫米外侧槽壁，最高约107.07毫米，能布置在110毫米箱体内。</p>
+  <p>最大压力角约<strong>42.31°</strong>（原46.52°），因此槽轮仍会对车架产生明显侧向载荷。必须按实测总质量、重心、使用推力和摩擦核算滚轮接触应力、槽板刚度、曲柄弯曲、耳轴扭矩、导向承载与M1驱动余量。运动几何可实现并不等于强度或驱动能力已验证；若载荷核算不满足要求，应重新优化槽形或行程并评审。</p>
   <p>建议试制使用可更换金属槽板、适配额定载荷的带轴承滚轮，以及允许检修的封闭支架；材料硬度、表面处理、槽壁粗糙度、润滑和密封按滚轮厂家资料选定。Ø10滚轮是本空间方案的参考尺寸，尚未指定满足载荷与寿命要求的标准型号。</p>
 
   <h3>升降保持与防坠（D5-2 概念方案）</h3>
@@ -211,7 +211,7 @@
     <thead><tr><th>状态</th><th>升程 / 倾角 / 盖</th><th>动作与取用条件</th></tr></thead>
     <tbody>
       <tr><td>01 平放收纳</td><td>0 / 0° / 闭合</td><td>书签定位于四槽内，模块水平收入箱体。</td></tr>
-      <tr><td>02 倾斜展示</td><td>60 / 20° / 闭合</td><td>先平移18毫米避开箱口，再边升边倾；透明膜保持覆盖，升降保持到位。</td></tr>
+      <tr><td>02 倾斜展示</td><td>60 / 20° / 闭合</td><td>先平移8毫米避开箱口，再边升边倾；透明膜保持覆盖，升降保持到位。</td></tr>
       <tr><td>03 开盖取用</td><td>60 / 20° / 卷收184</td><td>到位后开盖；待机构停稳、失电保持有效后，儿童取用书签。</td></tr>
     </tbody>
   </table>
@@ -279,8 +279,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
  * Cam slots are fixed to the box, with one locating master and one clearance backup.
  */
 const Mechanism=(()=>{
- const D=Object.freeze({boxW:300,boxD:222,boxH:110,wall:3,floor:6,trayWidth:244,trayDepth:172,trayY:-12,trayZ:98,lift:60,lidWidth:254,filmThickness:.3,filmLength:360,coverSpan:184,coverZ:106,guideY:92,guideZ:94,guideRadius:12,spoolY:72,spoolZ:66,coreRadius:14,cassetteRadius:18,screwX:129,screwY:-18,guideRodY:40,threadBottom:22,threadTop:98,nutZ:30,nutHeight:10,bearingBottom:14,bearingTop:22,spineInner:136,bearingOuter:138,skirtX:145.8,skirtY:106.5,skirtBottom:8,skirtTop:80,beltX:142,beltOuter:144,skirtThickness:.8,sideGuardTop:110,pivotY:-82,pivotZ:100,camArm:65,camRoller:5,slotWidth:10.3,displayP:.36,tiltMax:20*Math.PI/180,tiltDwell:18,tiltStroke:42});
- const advancedConstants=Object.freeze({pivotY:D.pivotY,pivotZ:D.pivotZ,camArm:D.camArm,camRollerRadius:D.camRoller,slotWidth:D.slotWidth,slotWall:3,slotHalfWidth:D.slotWidth/2,slotOuterOffset:D.slotWidth/2+3,backupSlotWidth:12.6,masterSide:1,backupSide:-1,frontHoodBottom:91,collarTop:80,displayDegrees:20,dwell:18,angleRampFraction:.25,pocketWidth:52,pocketLength:152,pocketDepth:4,pocketCount:4,stackMaximum:3,pocketFloor:2,pivotAxle:'two short supported side trunnions; no through shaft across cards',constraint:'one locating master cam, opposite cam with clearance and axial float'});
+ const D=Object.freeze({boxW:300,boxD:222,boxH:110,wall:3,floor:6,trayWidth:244,trayDepth:172,trayY:-12,trayZ:98,lift:60,lidWidth:254,filmThickness:.3,filmLength:360,coverSpan:184,coverZ:106,guideY:92,guideZ:94,guideRadius:12,spoolY:72,spoolZ:66,coreRadius:14,cassetteRadius:18,screwX:129,screwY:-18,guideRodY:40,threadBottom:22,threadTop:98,nutZ:30,nutHeight:10,bearingBottom:14,bearingTop:22,spineInner:136,bearingOuter:138,skirtX:145.8,skirtY:106.5,skirtBottom:8,skirtTop:80,beltX:142,beltOuter:144,skirtThickness:.8,sideGuardTop:110,pivotY:-82,pivotZ:100,camArm:65,camRoller:5,slotWidth:10.3,displayP:.36,tiltMax:20*Math.PI/180,tiltDwell:8,tiltStroke:52});
+ const advancedConstants=Object.freeze({pivotY:D.pivotY,pivotZ:D.pivotZ,camArm:D.camArm,camRollerRadius:D.camRoller,slotWidth:D.slotWidth,slotWall:3,slotHalfWidth:D.slotWidth/2,slotOuterOffset:D.slotWidth/2+3,backupSlotWidth:12.6,masterSide:1,backupSide:-1,frontHoodBottom:91,collarTop:80,displayDegrees:20,dwell:8,angleRampFraction:.25,pocketWidth:52,pocketLength:152,pocketDepth:4,pocketCount:4,stackMaximum:3,pocketFloor:2,pivotAxle:'two short supported side trunnions; no through shaft across cards',constraint:'one locating master cam, opposite cam with clearance and axial float'});
  const clamp=v=>Math.max(0,Math.min(1,v));
  const ease=v=>{v=clamp(v);return v*v*(3-2*v);};
  // Integral of a velocity curve with quarter-stroke half-cosine acceleration/deceleration.
@@ -361,7 +361,7 @@ const states=['平放收纳','倾斜展示','开盖取用'];
 const titles=['平放收纳','抬升与倾斜联动','20° 倾斜展示','柔性盖正在弯折卷收','开盖取用'];
 const descriptions=[
 '四列书签嵌入定位凹槽，前缘与右侧为基准，后端和左侧一体软肋保持位置。透明柔性膜平展覆盖。',
-'前 18 mm 水平抬升，越过盒口；之后封闭槽滚轮驱动托盘渐倾。竖车架保持直线运动，卷盖随托盘倾斜。',
+'先水平抬升 8 mm 越过盒口，之后封闭槽滚轮驱动托盘渐倾。竖车架保持直线运动，卷盖随托盘倾斜。',
 '升程 60 mm、倾角 20°，透明膜保持展开。定位凹槽与软肋限制书签滑移；展示到位后才开盖。',
 'M2 通过两侧同步带向后牵引前横梁，薄膜沿导辊连续弯折，卷簧卷轴随动收膜。',
 '184 mm 膜段已卷收，托盘保持 20°，机构静止后取用。盲指槽辅助抬起书签；复位先闭盖，再回平下降。'

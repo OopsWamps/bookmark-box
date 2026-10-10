@@ -28,15 +28,15 @@ async(mainPage)=>{
   check(near(m.tilt,q.tilt)&&near(m.pivot[1],100+q.lift),name+': separated tilt hinge follows analytic pose');
  };
  check(await page.locator('.model-canvas').count()===1,'one working WebGL canvas');
- check(await page.locator('.part-callout').count()===32,'32 numbered component callouts');
+ check(await page.locator('.part-callout').count()===36,'36 numbered component callouts');
  check(await page.locator('.part-callout:visible').count()===9,'exterior shows nine relevant callouts');
  await geometry('closed');
  check((await state()).lift===0&&(await state()).tiltDegrees===0&&(await state()).retract===0,'closed state is flat and covered');
  await page.screenshot({path:'output/advanced-closed.png'});
- // Find the end of the 18 mm horizontal dwell by inversion of the independent progress map.
- const dwellProgress=await page.evaluate(()=>{let lo=0,hi=.36;for(let i=0;i<48;i++){const m=(lo+hi)/2;if(Mechanism.pose(m).lift<18)lo=m;else hi=m;}return (lo+hi)/2;});
+ // Find the end of the 8 mm horizontal dwell by inversion of the independent progress map.
+ const dwellProgress=await page.evaluate(()=>{let lo=0,hi=.36;for(let i=0;i<48;i++){const m=(lo+hi)/2;if(Mechanism.pose(m).lift<8)lo=m;else hi=m;}return (lo+hi)/2;});
  await scrub(dwellProgress);
- check(Math.abs((await state()).lift-18)<.1&&Math.abs((await state()).tiltDegrees)<1e-5,'slider nearest dwell point remains level at 18 mm lift');
+ check(Math.abs((await state()).lift-8)<.1&&Math.abs((await state()).tiltDegrees)<1e-5,'slider nearest dwell point remains level at 8 mm lift');
  await geometry('dwell');
  await scrub(.27);check((await state()).tiltDegrees>0&&(await state()).tiltDegrees<20&&(await state()).retract===0,'lift and tilt occur together after dwell');await geometry('mid stroke');
  await page.locator('[data-state="1"]').click();await frame();
@@ -46,7 +46,7 @@ async(mainPage)=>{
  const open=await state();check(open.progress===1&&open.retract===184&&Math.abs(open.tiltDegrees-20)<1e-8&&open.skirtOverlap===42,'fully open preserves tilt and 42 mm sleeve overlap');await geometry('open');
  await page.screenshot({path:'output/advanced-open.png'});
  await page.locator('#cutaway').check();await frame();check((await state()).cutaway,'cutaway reveals mechanism');
- check(await page.locator('.part-callout:visible').count()===27,'cutaway shows 27 support and motion annotations');
+ check(await page.locator('.part-callout:visible').count()===31,'cutaway shows 31 support and motion annotations');
  await page.locator('.part-callout[data-part="31"]').click();
  check((await page.locator('#partInfo').innerText()).includes('直线导向滑套'),'guide bushing has an independent component explanation');
  await page.locator('.part-callout[data-part="32"]').click();

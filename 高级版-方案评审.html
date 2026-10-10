@@ -49,7 +49,7 @@ details{border-bottom:1px solid #ddd;margin-top:25px;font-size:12px;color:#666}s
 <div><div class="stage"><div class="stage-head"><span>侧视原理 · 前低后高</span><span id="stageState">倾斜展示</span></div><canvas id="mechanismCanvas" role="img" aria-label="升降与倾斜机构运行侧视图">升降60毫米并联动倾斜20度，随后柔性盖卷收。</canvas><div class="stage-foot"><div class="legend"><span>倾斜模块</span><span>竖直升降车架</span><span>连续柔性防护罩</span></div><div style="margin-top:5px">不同横向位置的部件叠绘；轮廓不代表同一实体剖面。</div></div></div>
 <div class="controls"><button class="primary" id="playBtn">全程演示</button><button id="pauseBtn" disabled>暂停</button><button id="resetBtn">复位</button><span class="small" style="margin-left:auto">约 10 秒 · 可随时拖动</span></div>
 <div class="progress-wrap"><label for="progress">进程</label><input id="progress" type="range" min="0" max="100" step=".1" value="62" aria-label="高级版演示进程"><output class="percent" id="percent">62%</output></div>
-<div class="sequence"><div><b>01</b> 水平起升 18 mm</div><div><b>02</b> 边升边倾至 20°</div><div><b>03</b> 到位后卷盖取用</div></div></div>
+<div class="sequence"><div><b>01</b> 水平起升 8 mm</div><div><b>02</b> 边升边倾至 20°</div><div><b>03</b> 到位后卷盖取用</div></div></div>
 <aside class="aside"><div><div class="aside-title">三个使用状态 · 点击调节</div><div class="states"><button class="state" data-state="0" aria-pressed="false"><span>01</span>平放收纳</button><button class="state" data-state=".62" aria-pressed="true"><span>02</span>倾斜展示</button><button class="state" data-state="1" aria-pressed="false"><span>03</span>开盖取用</button></div><label class="toggle"><input type="checkbox" id="guard" checked>显示连续防护罩</label><label class="toggle"><input type="checkbox" id="labels" checked>显示部件标注</label></div>
 <div><h3 class="phase-title" id="phaseTitle">倾斜展示</h3><p class="phase-copy" id="phaseCopy"></p><dl class="metrics"><div><dt>前支点升程</dt><dd><span id="liftValue">60</span><small>mm</small></dd></div><div><dt>展示倾角</dt><dd><span id="angleValue">20</span><small>°</small></dd></div><div><dt>盖膜卷收</dt><dd><span id="coverValue">0</span><small>mm</small></dd></div></dl><p class="small" style="margin-top:17px">实体机构的倾角由凸轮槽确定。进程滑块用于观察动作，不代表增加独立调角电机。</p></div></aside></section>
 <section class="section"><div class="section-head"><h2>一张书签，一个定位槽。</h2><span class="small">50 × 150 mm · 四列陈列</span></div><div class="pocket-grid">
@@ -62,9 +62,9 @@ details{border-bottom:1px solid #ddd;margin-top:25px;font-size:12px;color:#666}s
 </tbody></table></div><p class="small">相对成本为结构比较，尚无供应商报价。寿命不能仅由机构类型确定，需结合材料、载荷、使用频次和循环试验；本页不承诺具体年限。</p></section>
 <section class="section"><div class="section-head"><h2>把转动缝隙，留在防护内。</h2><span class="small">成人操作 · 儿童取用</span></div><div class="engineering"><article><span class="badge">01 / 连接与保持</span><h3>升降与倾斜分层承载</h3><p>丝杠螺母和竖直导向车架保持竖直；托盘下横梁连接两端同轴耳轴。主侧封闭槽确定倾角，副侧带受控间隙的槽作为防翻落备份，避免双侧无间隙约束导致卡滞。</p><p>备份槽不能替代升降防坠。实物需独立的失电机械保持或制动，以及检修支撑。</p></article><article><span class="badge">02 / 封装与动作</span><h3>竖裙罩加连续柔性罩</h3><p>竖裙罩随车架平移，上缘调整至 80＋升程。倾斜模块和竖裙罩之间加连续风琴罩，转轴、曲柄和槽滚轮均位于防护内，外侧封闭刚性罩限制触达。</p><p>先起升 18 mm 避开箱口，再联动倾斜。成人操作、维护盖联锁、遮挡停机和解除后重新发起动作需要实物验证。</p></article><article><span class="badge">03 / 紧凑与耐久</span><h3>卷盒上移并前置</h3><p>卷盒中心由旧版后下挂位置改为 Y＝72、Z＝66 mm。托盘、透明膜和辊轴作为同一倾斜模块，膜的局部路径不随角度变化；新卷盒需重新安排出膜缝与弹簧预紧。</p><p>膜、软限位与柔性防护罩都应做清洁和反复弯折测试。升降 U 形电缆之外，倾斜接点需单独留柔性线缆弯曲段。</p></article></div>
 <details><summary>展开尺寸校核、载荷关注点与资料来源</summary><div class="dossier"><p>机械坐标：X 向右，Y 向后，Z 向上，单位 mm。前耳轴 Y＝−82、Z＝100＋升程；向下曲柄长 65 mm；滚轮外径参考 10 mm，主槽名义宽 10.3 mm。曲柄及槽板的横向层次仍需最终三维建模。</p><ul>
-<li>水平起升 18 mm；随后 42 mm 行程联动至 20°。角速度采用 25% 平滑升速、50% 匀速、25% 平滑降速的曲线，起止角速度和角加速度为零。</li>
-<li>独立平面校核：6001 个升程采样；凸轮中心线最小曲率半径约 10.73 mm，按槽半宽 5.15 mm 偏置后约 5.58 mm，未出现平面偏置尖点。</li>
-<li>最大压力角约 46.52°，会产生明显侧向载荷，必须核算滚轮接触应力、槽板刚度、耳轴扭矩和升降电机余量。角度和槽形可在试制反馈后优化。</li>
+<li>水平起升 8 mm；随后 52 mm 行程联动至 20°。角速度采用首末约 16.7% 半余弦加减速、中间匀速的三段修正曲线（峰值速度约 1.33 倍平均值），起止角速度和角加速度为零。</li>
+<li>独立平面校核：6001 个升程采样；凸轮中心线最小曲率半径约 15.83 mm，按槽半宽 5.15 mm 偏置后约 10.68 mm，未出现平面偏置尖点。</li>
+<li>最大压力角约 42.31°，会产生明显侧向载荷，必须核算滚轮接触应力、槽板刚度、耳轴扭矩和升降电机余量。角度和槽形可在试制反馈后优化。</li>
 <li>槽末端滚轮中心约 Y＝−59.77、Z＝98.92 mm；加滚轮半径、槽间隙及 3 mm 槽壁后最高约 107.07 mm，名义上能收入 110 mm 箱体。</li>
 <li>新卷盒外半径 18 mm，与导向辊外包络初始间隔约 4.41 mm；距托盘底 8 mm；弹簧盒距固定背板后缘 3 mm；卷盒距后导柱上座 7 mm。</li>
 <li>倾斜过程中卷盒后缘最大约 Y＝93.71 mm。前硬罩底设为 Z＝91 mm，对竖裙罩上缘最小名义间隔约 3.16 mm；该间隙由连续防护罩隔离，不能据此认定防夹安全。</li>

@@ -15,7 +15,7 @@ for(let i=0;i<=6000;i++){
  close(c.y,expectedY,'cam closure y');close(c.z,expectedZ,'cam closure z');
  const camLocal=transformPoint(0,D.pivotY,D.pivotZ-D.camArm,q);
  close(camLocal.y,c.y,'rigid cam arm y');close(camLocal.z,c.z,'rigid cam arm z');
- if(lift<=18)close(q.tilt,0,'clearance dwell');
+ if(lift<=8)close(q.tilt,0,'clearance dwell');
  const front=transformPoint(0,-106.5,91,q),reel=transformPoint(0,72,66,q);
  minFrontGap=Math.min(minFrontGap,front.z-(80+lift));rearMax=Math.max(rearMax,reel.y+18);
  assert(c.z-A.slotOuterOffset>6&&c.z+A.slotOuterOffset<110,'fixed cam plate clears floor and shell height');
