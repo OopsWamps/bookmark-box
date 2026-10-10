@@ -12,6 +12,12 @@ html=html.replace(/<title>[^<]*<\/title>/,'<title>拾页 · 凸轮倾斜高级�
  .replace('<dt>卷筒直径</dt><dd><span id="angleValue">28</span><small>mm</small>','<dt>展示倾角</dt><dd><span id="angleValue">0</span><small>°</small>')
  .replace('剖面用于检查支承、运动与裙罩搭接；几何检查不等于安全认证。','主槽滚轮把升程转换为倾角；整组卷盖随托盘倾斜。剖视与数值检查用于结构评审。');
 insert('</style>',css+read('annotations.css')+'#sceneHost.dense-annotations{min-height:460px}\n'+'</style>');
+// Lift-safety demo (D5-2): a third interlock button drops the pawls and blocks
+// every motion source until it is released, mirroring the obstacle/service gates.
+html=html.replace('<button type="button" id="obstacleBtn" aria-pressed="false">模拟遮挡</button>',
+ '<button type="button" id="obstacleBtn" aria-pressed="false">模拟遮挡</button><button type="button" id="powerLossBtn" aria-pressed="false">模拟失电锁定</button>');
+html=html.replace('<p class="safety-note">信号触发即停；解除后需重新选择动作。此处为控制逻辑演示。</p>',
+ '<p class="safety-note">信号触发即停；失电时棘爪落入棘条保持位置，检修支撑随维护盖翻出。此处为控制逻辑演示，不代表实物保持与防坠性能。</p>');
 insert('<!-- DIMENSIONS -->','<span class="height-comparison">300 × 222 × 110 mm</span><span class="dimension-detail">凸轮倾斜高级版 · 四列 50 × 150 mm 书签<br>60 mm 抬升 · 20° 展示 · 柔性卷盖</span>');
 insert('<!-- ENGINEERING_DETAILS -->',`<h3>一个升降输入，联动 20° 展示。</h3><p>右侧封闭凸轮槽与轴承滚轮配合，前 18 mm 保持水平避开盒口，后 42 mm 抬升并逐渐倾斜。左侧余隙槽提供防翻落备份，两侧耳轴通过托盘底部框梁相连。</p><dl><div class="detail-row"><dt>定位收纳</dt><dd>四个 52 × 152 × 4 mm 凹槽，盲指槽与侧向软限位</dd></div><div class="detail-row"><dt>紧凑机构</dt><dd>65 mm 曲柄 · Ø10 滚轮 · 4 mm 窄带槽板</dd></div><div class="detail-row"><dt>连续封装</dt><dd>竖直套筒 + 倾斜护罩 + 连续浅褶柔性罩</dd></div></dl><p style="margin-top:18px">整组卷盖随托盘倾斜，保持膜路相对位置。到达展示位后，透明柔性盖卷收 <strong>184 mm</strong>，进入后侧 <strong>Ø36 mm</strong> 卷盒。复位先闭盖，再反向回平下降。</p><div class="material-line"><span>哑黑外壳</span><span>白色承托</span><span>透明 TPU</span></div><div class="limits">滚轮肩轴、槽壁接触应力、柔性罩折叠与儿童触达需要实物验证；页面联锁为交互演示。最大压力角约 46.5°，驱动力及寿命须按实际载荷校核。</div>`);
 insert('    </main>',`<details class="technical-dossier"><summary>展开机构说明与尺寸校核<span>方案选择、支承连接、凹槽与儿童防护</span></summary><p><a href="书签收纳盒-紧凑防护版.html">查看基础版</a> · <a href="高级版-方案评审.html">查看方案评审</a></p>${read('advanced-engineering-details.html')}</details>\n    </main>`);
@@ -31,6 +37,14 @@ let scene=read('scene.js')
  .replace('const radius=850,focus=76','const radius=850,focus=106')
  .replace('roughness:.10,metalness:0,transparent:true,opacity:.17','roughness:.14,metalness:0,transparent:true,opacity:.38')
  .replace("q.rollDiameter.toFixed(1)","q.tiltDegrees.toFixed(1)")
+ .replace('obstacle=false,serviceOpen=false,restartRequired=false;','obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false;')
+ .replaceAll('obstacle||serviceOpen','obstacle||serviceOpen||powerLost')
+ .replace("serviceOpen?'维护盖未锁 · 驱动禁用':","powerLost?'失电锁定 · 棘爪落入棘条，运动保持禁止':serviceOpen?'维护盖未锁 · 驱动禁用':")
+ .replace("$('obstacleBtn').textContent=obstacle?'解除遮挡':'模拟遮挡';$('obstacleBtn').setAttribute('aria-pressed',String(obstacle));",
+ "$('obstacleBtn').textContent=obstacle?'解除遮挡':'模拟遮挡';$('obstacleBtn').setAttribute('aria-pressed',String(obstacle));$('powerLossBtn').textContent=powerLost?'恢复供电':'模拟失电锁定';$('powerLossBtn').setAttribute('aria-pressed',String(powerLost));")
+ .replace("obstacle,serviceOpen,restartRequired};","obstacle,serviceOpen,restartRequired,powerLost};")
+ .replace("$('serviceOpen').addEventListener('change',e=>{serviceOpen=e.target.checked;stopOnInterlock();});",
+ "$('serviceOpen').addEventListener('change',e=>{serviceOpen=e.target.checked;stopOnInterlock();});\n$('powerLossBtn').addEventListener('click',()=>{powerLost=!powerLost;stopOnInterlock();});")
  .replace('/* ANNOTATION_SYSTEM */',()=>read('advanced-annotations.js'))
  .replace('/* MECHANISM_RENDERER */',()=>renderer);
 insert('<!-- SCENE_SCRIPT -->','<script>\n'+read('advanced-kinematics.js')+'\n'+scene+'\n</script>');

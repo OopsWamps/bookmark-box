@@ -107,10 +107,10 @@
           </div>
           <div class="safety-demo" role="group" aria-labelledby="safetyDemoTitle">
             <h3 id="safetyDemoTitle">联锁演示</h3>
-            <button type="button" id="obstacleBtn" aria-pressed="false">模拟遮挡</button>
+            <button type="button" id="obstacleBtn" aria-pressed="false">模拟遮挡</button><button type="button" id="powerLossBtn" aria-pressed="false">模拟失电锁定</button>
             <label class="check-control" for="serviceOpen"><span>模拟维护盖未锁</span><input id="serviceOpen" type="checkbox"></label>
             <p id="safetyStatus" class="safety-status" role="status" aria-live="polite">联锁就绪 · 实物由成人操作</p>
-            <p class="safety-note">信号触发即停；解除后需重新选择动作。此处为控制逻辑演示。</p>
+            <p class="safety-note">信号触发即停；失电时棘爪落入棘条保持位置，检修支撑随维护盖翻出。此处为控制逻辑演示，不代表实物保持与防坠性能。</p>
           </div>
           <p class="panel-tip">拖动进度条可以逐步观察；剖切仅隐藏模型封装，便于检查连接关系。</p>
         </aside>
@@ -180,6 +180,18 @@
   <p>采用该曲线的平面设计结果：槽中心线最小曲率半径约<strong>10.73毫米</strong>；主槽按半宽5.15毫米偏置后，内侧最小曲率半径约5.58毫米，名义曲线不出现偏置尖点。槽末端滚轮中心约(Y−59.77，Z98.92)，计入槽半宽与3毫米外侧槽壁，最高约107.07毫米，能布置在110毫米箱体内。</p>
   <p>最大压力角约<strong>46.52°</strong>，因此槽轮会对车架产生明显侧向载荷。必须按实测总质量、重心、使用推力和摩擦核算滚轮接触应力、槽板刚度、曲柄弯曲、耳轴扭矩、导向承载与M1驱动余量。运动几何可实现并不等于强度或驱动能力已验证；若载荷核算不满足要求，应重新优化槽形或行程并评审。</p>
   <p>建议试制使用可更换金属槽板、适配额定载荷的带轴承滚轮，以及允许检修的封闭支架；材料硬度、表面处理、槽壁粗糙度、润滑和密封按滚轮厂家资料选定。Ø10滚轮是本空间方案的参考尺寸，尚未指定满足载荷与寿命要求的标准型号。</p>
+
+  <h3>升降保持与防坠（D5-2 概念方案）</h3>
+  <p>升降方向的安全由三层互相独立的功能承担，任何一层失效不得由另一层弥补：</p>
+  <table>
+    <thead><tr><th>层次</th><th>构件（模型编号）</th><th>覆盖工况</th><th>边界</th></tr></thead>
+    <tbody>
+      <tr><td>失电保持</td><td>M1 尾端失电制动抱闸（35号）</td><td>正常停止后断电，电机轴抱紧保持位置</td><td>只作用于电机轴：断带后对丝杠无约束；扭矩、响应与停止距离待选型</td></tr>
+      <tr><td>传动失效防坠</td><td>固定棘条（33号）＋车架常闭棘爪（34号）</td><td>断带、螺母失效等传动中断时挡住下坠；与驱动链无关</td><td>齿形、齿强度、落座冲击与骑齿对位未设计；棘条不承担正常升降载荷</td></tr>
+      <tr><td>检修支撑</td><td>可翻转检修挡块（36号）</td><td>维护盖开启时翻出，机构落座后人员接近</td><td>是检修支撑而非运行防坠；悬臂刚度与落座冲击需校核</td></tr>
+    </tbody>
+  </table>
+  <p>棘条位于丝杠内侧（X±122.5…125.0、Y−10…6、Z6…83），在14号螺母臂与31号滑套臂的扫掠区之间，底部连底板、顶部经连接板接侧脊板；固定齿顶不超过 Z83，为收纳状态托盘底面（Z86）让出间隙。齿距4毫米、齿深2.3毫米为概念占位。爪臂枢轴 Z38＋升程，由保持型电磁铁得电抬起、失电落入齿谷，满升位置爪底位于最高齿上方1毫米，全行程保持可啮合；得电抬起、失电落下方向满足失效安全；<strong>梯形丝杠自锁仅作降级备份，不作为独立保持措施</strong>。棘爪、电磁铁与抱闸均为占位外形，整机质量、重心与使用强度仍为 UNKNOWN，全部选型与强度核算为 UNVERIFIED。页面"模拟失电锁定"按钮演示该逻辑，不代表实物保持与防坠性能。</p>
 
   <h3>受力转角与边缘处理</h3>
   <p>受力构件的凹转角采用<strong>圆角过渡</strong>，减少截面突变处的应力集中；外露锐边采用<strong>C0.3…0.5毫米倒角</strong>并去毛刺。模型已在后共用轴承板两处凹转角采用R2、外凸轮廓采用R1，在固定侧脊柱与底脚、凸轮板支脚根部增加R2过渡实体；基础轴承座及导杆支座的外轮廓采用R1。车架主梁外边采用C0.5、叉臂连接块与凸轮板底脚外边采用C0.3。</p>
@@ -340,7 +352,7 @@ if(typeof module!=='undefined')module.exports=Mechanism;
 'use strict';
 const $=id=>document.getElementById(id), {D,pose}=Mechanism;
 const host=$('sceneHost');
-let p=0,target=0,moving=false,queue=[],hold=0,last=0,cut=false,dirty=true,obstacle=false,serviceOpen=false,restartRequired=false;
+let p=0,target=0,moving=false,queue=[],hold=0,last=0,cut=false,dirty=true,obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let scene,renderer,camera,liftGroup,frontBrand,pullBar,filmMesh,filmEdges,filmRoll,reelGroup,cassetteShell;
 const shellParts=[],screws=[],tags=[];
@@ -440,7 +452,11 @@ function buildPartAnnotations(){
  ['连续倾斜防护罩','guard','outer',()=>{const q=pose(p),a=Mechanism.transformPoint(142,20,91,q);return new THREE.Vector3(142,(a.z+76+q.lift)/2,-(a.y+20)/2);},'侧根 X±142，前后根 Y±100；前部下根 Z76＋升程、上根局部 Z91，局部 Y70…96 段连续下移 11 mm，后根为 Z65＋升程与局部 Z80。16 折浅褶罩末端向内回折，上下以连续成形法兰连接倾斜硬罩与竖裙罩。厚约 0.25 mm 为候选，折叠、夹持和疲劳性能需实物验证。'],
  ['定位槽与一体软限位','support','always',tiltPartPoint(29,62.5,95.8),'四槽各 52 × 152 × 4 mm、内角 R2；后端增加 R8 盲指槽并保留 2 mm 连续槽底。书签贴前、右基准，后端与左侧不可拆软肋轻预压，抑制纵向及侧向游隙；示例堆厚不超过 3 mm。'],
  ['直线导向滑套','support','inside',partPoint(-129,40,30,'carriage'),'黑色滑动套筒由32号灰色连接臂连接竖车架，沿12号固定导杆滑动；随车架从 Z30 升至 Z90，不随托盘倾斜。内孔名义 Ø6、外径 Ø10、长10 mm，提供滑动支承、防止车架侧摆并分担凸轮侧向载荷；14号螺母负责驱动升降。滑套配合、材料和允许载荷需选型校核。'],
- ['后导向连接臂','support','inside',partPoint(-119,40,30,'carriage'),'附着在31号黑色滑套侧面的灰色连接臂，经短承接段连接竖直车架，把车架侧向力传给滑套与12号固定导杆；它随车架升降，不是止挡或固定底座。左右各一组：连接臂12 × 12 × 6 mm（X × Y × Z），外边 C0.5；短承接段6 × 9 × 6 mm，外边 C0.3，跨接原5 mm断口并与两端搭接。连接与滑套保持方式需在加工图中明确。']
+ ['后导向连接臂','support','inside',partPoint(-119,40,30,'carriage'),'附着在31号黑色滑套侧面的灰色连接臂，经短承接段连接竖直车架，把车架侧向力传给滑套与12号固定导杆；它随车架升降，不是止挡或固定底座。左右各一组：连接臂12 × 12 × 6 mm（X × Y × Z），外边 C0.5；短承接段6 × 9 × 6 mm，外边 C0.3，跨接原5 mm断口并与两端搭接。连接与滑套保持方式需在加工图中明确。'],
+ ['防坠棘条','support','inside',partPoint(123.75,-2,44),'固定于底板并经上连接板接到侧脊板的齿条，位于丝杠内侧、螺母臂与滑套臂扫掠区之间（X±122.5…125.0、Y−10…6、Z6…83）。34号棘爪沿齿升降，失电时爪落在齿上，传动失效或断带时的下坠由与驱动链无关的棘条挡住。固定齿顶不超过 Z83，为收纳状态托盘底面（Z86）让出间隙。齿距4 mm、齿深2.3 mm为概念占位；齿形、齿强度与冲击载荷需按整机质量设计，副槽与棘条都不能替代检修支撑。'],
+ ['防坠棘爪与保持电磁铁','support','inside',partPoint(117.5,-2,38,'carriage'),'装在竖车架梁外侧的摆动爪，枢轴 Z38＋升程；由保持型电磁铁得电抬起、失电靠自重落入33号棘条齿谷，满升位置爪底仍在最高齿上方1 mm，全行程保持可啮合。得电抬起、失电落下的方向满足失效安全；落座冲击、骑齿对位和爪销磨损需实物验证。图中电磁铁为占位外形，选型按整机质量与下降加速度核算。'],
+ ['M1 失电制动抱闸','drive','inside',partPoint(0,-64,16),'带轮与电机本体之间的失电制动盘占位：通电松闸、断电抱轴，负责正常停止后的位置保持。它作用在电机轴上，断带后对丝杠失去约束，防坠由33号棘条独立承担；抱闸扭矩、响应时间与停止距离需按载荷选型，本模型不代表已选定型号。'],
+ ['可翻转检修挡块','support','inside',partPoint(136,22,27),'铰接在内壁的支撑臂，维护盖开启时翻出到车架梁下方（支撑面 Z28，梁底 Z30，落差2 mm）。检修时机构落在挡块上，人员才能接近升降区；挡块是检修支撑，不是运行防坠，悬臂刚度与落座冲击需校核。演示中随"模拟维护盖未锁"联动。']
  ];
  annotationSvg=document.createElementNS('http://www.w3.org/2000/svg','svg');annotationSvg.classList.add('annotation-lines');annotationSvg.setAttribute('aria-hidden','true');host.appendChild(annotationSvg);
  specs.forEach((s,i)=>{
@@ -581,7 +597,7 @@ function buildLowBox(){
  buildAdvancedParts();
 }
 // Mechanical coordinates are X right, Y rear, Z up. Three uses (X,Z,-Y).
-let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell;
+let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[];
 const mechanicalToThree=p=>new THREE.Vector3(p.x,p.z,-p.y);
 // Local edge treatment only. The chamfer removes material inside the original
 // box envelope; central flat mating faces and all original locations are kept.
@@ -816,6 +832,7 @@ function buildAdvancedParts(){
  advanceMoving.push(formedGuardRing(tiltGroup,286.4,201.4,284,200,91,94,'rear-upper-clamp',true));
  upperCornerClosures();
  liftGroup=carriage;
+ buildSafetyDevices();
  const bellowsMat=material(0xa8a8a5,{roughness:1,side:THREE.DoubleSide});
  bellowsMesh=new THREE.Mesh(bellowsGeometry(pose(0)),bellowsMat);scene.add(bellowsMesh);
  // Original constant-length lift U-loop and an independent hinge bend segment.
@@ -826,6 +843,45 @@ function buildAdvancedParts(){
  box(liftGroup,3,4,5,110.5,82,68,silver);box(liftGroup,4,4,5,108,82,68,rubber);
  box(tiltGroup,3,3,5,110.5,89,68,silver);box(tiltGroup,4,3,5,108,89,68,rubber);
  hingeCable=new THREE.Mesh(new THREE.TubeGeometry(hingeCableCurve(pose(0)),32,1.1,8,false),rubber);scene.add(hingeCable);
+}
+// D5-2 lift safety train, approved as combination 1 (DEC-002): energised brake
+// for holding, sprung pawls on fixed racks for run-away arrest independent of
+// the drive, and swing-out service props. Concept geometry only: tooth
+// profiles, solenoid and brake sizing, prop stiffness and impact behaviour
+// stay UNVERIFIED until mass and duty data exist.
+function buildSafetyDevices(){
+ for(const sign of [-1,1]){
+  // Fixed rack beside each lead screw: X122.5…125.0, Y-10…6, Z6…83. Teeth stop
+  // at Z83 so nothing fixed enters the stored tray envelope (floor Z86) west of
+  // X122; the top plate reaches over the screw to the side spine. Both gaps
+  // avoid the nut and guide arms, the belt run and the bearing blocks
+  // (verify-safety-devices).
+  box(scene,2.5,77,16,sign*123.75,44.5,2,silver).name='pawl-rack-'+(sign>0?'right':'left');
+  for(let z=8;z<=80;z+=4)box(scene,2.3,2,16,sign*121.35,z,2,silver);
+  screwHead(scene,sign*123.75,7,8);screwHead(scene,sign*123.75,7,-4);
+  box(scene,13.8,7,16,sign*132.1,91.5,2,silver);
+  screwHead(scene,sign*137,95,4);
+  // Carriage pawl: a fixed bracket carries the pivot outboard of the tooth
+  // tips (bracket stays west of X120.2 for the whole stroke), the hooked claw
+  // hangs from it and drops onto the tooth upper faces on power loss. The
+  // holding solenoid is a placeholder mounted on the bracket face.
+  box(liftGroup,2.2,2.6,1.6,sign*118.1,38,2,silver);
+  cylinder(liftGroup,1,6,sign*119.2,38,2,dark,'y');
+  box(liftGroup,2.8,7,4,sign*118.1,44.5,2,dark);
+  const pawl=new THREE.Group();pawl.position.set(sign*119.2,38,2);liftGroup.add(pawl);
+  box(pawl,2.4,16,1.6,1.2,-8,0,silver);
+  pawl.userData.pawlSign=sign;pawlPivots.push(pawl);
+  // Service prop hinged at the inner wall; stowed vertical, swung out flat
+  // beneath the carriage beams when the maintenance cover is opened.
+  const prop=new THREE.Group();prop.position.set(sign*146,27,-22);scene.add(prop);
+  box(prop,40,2,16,-sign*20,0,0,silver);
+  prop.rotation.y=sign*Math.PI/2;serviceProps.push(prop);
+ }
+ // Fail-safe brake disc between the M1 output pulley and the motor body,
+ // on fixed brackets clear of the belt run.
+ cylinder(scene,6,5,0,16,64,dark,'x').name='brake-disc';
+ ring(scene,6.4,8.2,6,0,16,64,silver,'x');
+ for(const x of [-8,8])box(scene,2,7.5,4,x,9.75,50,silver);
 }
 function bellowsGeometry(q){
  const perimeter=[],r=4,hw=142,hd=100;
@@ -864,7 +920,12 @@ function updateLowBox(q){
  bellowsMesh.geometry.dispose();bellowsMesh.geometry=bellowsGeometry(q);
  const cable=scene.getObjectByName('harness');cable.geometry.dispose();cable.geometry=new THREE.TubeGeometry(cableCurve(q.lift),48,1.1,8,false);
  hingeCable.geometry.dispose();hingeCable.geometry=new THREE.TubeGeometry(hingeCableCurve(q),32,1.1,8,false);
- window.advancedScene={tiltPivot,tiltGroup,liftGroup,camRollers,bellowsMesh};
+ // Pawls hang engaged only while power is lost; props stay folded until the
+ // maintenance interlock opens. Both are fail-safe displays, not validated
+ // retention behaviour.
+ pawlPivots.forEach(g=>g.rotation.y=g.userData.pawlSign*(powerLost?0:.12));
+ serviceProps.forEach(g=>g.rotation.y=Math.sign(g.position.x)*(serviceOpen?0:Math.PI/2));
+ window.advancedScene={tiltPivot,tiltGroup,liftGroup,camRollers,bellowsMesh,pawlPivots,serviceProps};
 }
 function drawLowSection(q){
  const canvas=$('sectionCanvas');if(!canvas)return;const w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(devicePixelRatio,2);canvas.width=w*dpr;canvas.height=h*dpr;
@@ -919,11 +980,11 @@ function sync(){
   document.querySelectorAll('[data-phase]').forEach(e=>{const i=+e.dataset.phase;e.classList.toggle('is-active',i===(p<.36?0:p<1?1:2));});
   $('pauseBtn').textContent=moving?'暂停':'继续';$('pauseBtn').disabled=!moving&&Math.abs(p-target)<.0001&&!queue.length;
   drawLowSection(q);update3D(q);
-  $('safetyStatus').textContent=obstacle?'遮挡触发 · 已停止，禁止运动':serviceOpen?'维护盖未锁 · 驱动禁用':restartRequired?'信号已解除 · 请重新选择动作':'联锁就绪 · 实物由成人操作';
-  $('obstacleBtn').textContent=obstacle?'解除遮挡':'模拟遮挡';$('obstacleBtn').setAttribute('aria-pressed',String(obstacle));
-  window.bookmarkDesignState={progress:p,...q,moving,cutaway:cut,obstacle,serviceOpen,restartRequired};
+  $('safetyStatus').textContent=obstacle?'遮挡触发 · 已停止，禁止运动':powerLost?'失电锁定 · 棘爪落入棘条，运动保持禁止':serviceOpen?'维护盖未锁 · 驱动禁用':restartRequired?'信号已解除 · 请重新选择动作':'联锁就绪 · 实物由成人操作';
+  $('obstacleBtn').textContent=obstacle?'解除遮挡':'模拟遮挡';$('obstacleBtn').setAttribute('aria-pressed',String(obstacle));$('powerLossBtn').textContent=powerLost?'恢复供电':'模拟失电锁定';$('powerLossBtn').setAttribute('aria-pressed',String(powerLost));
+  window.bookmarkDesignState={progress:p,...q,moving,cutaway:cut,obstacle,serviceOpen,restartRequired,powerLost};
 }
-function go(value){if(obstacle||serviceOpen)return;restartRequired=false;queue=[];hold=0;target=value;if(reduce){p=target;moving=false;}else moving=Math.abs(p-target)>.00001;sync();}
+function go(value){if(obstacle||serviceOpen||powerLost)return;restartRequired=false;queue=[];hold=0;target=value;if(reduce){p=target;moving=false;}else moving=Math.abs(p-target)>.00001;sync();}
 function tick(t){
   const dt=last?Math.min((t-last)/1000,.05):0;last=t;
   const wasMoving=moving;
@@ -937,13 +998,14 @@ function tick(t){
   if(wasMoving||dirty){sync();dirty=false;}requestAnimationFrame(tick);
 }
 document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>go([0,.36,1][+b.dataset.state])));
-$('playBtn').addEventListener('click',()=>{if(obstacle||serviceOpen)return;restartRequired=false;if(reduce){go(1);return;}queue=[.36,1];if(p>.001){queue.unshift(0);}target=queue.shift();hold=0;moving=true;sync();});
-$('pauseBtn').addEventListener('click',()=>{if(obstacle||serviceOpen||restartRequired)return;moving=!moving;sync();});
+$('playBtn').addEventListener('click',()=>{if(obstacle||serviceOpen||powerLost)return;restartRequired=false;if(reduce){go(1);return;}queue=[.36,1];if(p>.001){queue.unshift(0);}target=queue.shift();hold=0;moving=true;sync();});
+$('pauseBtn').addEventListener('click',()=>{if(obstacle||serviceOpen||powerLost||restartRequired)return;moving=!moving;sync();});
 $('resetBtn').addEventListener('click',()=>go(0));
-$('progress').addEventListener('input',e=>{if(obstacle||serviceOpen){sync();return;}restartRequired=false;p=Math.max(0,Math.min(1,Number(e.target.value)/100));target=p;moving=false;queue=[];hold=0;sync();});
+$('progress').addEventListener('input',e=>{if(obstacle||serviceOpen||powerLost){sync();return;}restartRequired=false;p=Math.max(0,Math.min(1,Number(e.target.value)/100));target=p;moving=false;queue=[];hold=0;sync();});
 function stopOnInterlock(){moving=false;target=p;queue=[];hold=0;restartRequired=true;sync();}
 $('obstacleBtn').addEventListener('click',()=>{obstacle=!obstacle;stopOnInterlock();});
 $('serviceOpen').addEventListener('change',e=>{serviceOpen=e.target.checked;stopOnInterlock();});
+$('powerLossBtn').addEventListener('click',()=>{powerLost=!powerLost;stopOnInterlock();});
 $('cutaway').addEventListener('change',e=>{cut=e.target.checked;$('annotationGroup').value='view';sync();});$('labels').addEventListener('change',sync);
 function setView(mode){viewMode=mode;zoom=1;azimuth=mode==='side'?Math.PI/2:mode==='top'?0:.73;elevation=mode==='side'?.05:mode==='top'?Math.PI/2-.001:.50;['viewIso','viewSide','viewTop'].forEach((id,i)=>{$(id).classList.toggle('is-active',['iso','side','top'][i]===mode);$(id).setAttribute('aria-pressed',String(['iso','side','top'][i]===mode));});updateCamera();sync();}
 $('viewIso').addEventListener('click',()=>setView('iso'));$('viewSide').addEventListener('click',()=>setView('side'));$('viewTop').addEventListener('click',()=>setView('top'));

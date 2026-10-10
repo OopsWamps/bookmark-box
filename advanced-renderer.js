@@ -1,5 +1,5 @@
 // Mechanical coordinates are X right, Y rear, Z up. Three uses (X,Z,-Y).
-let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell;
+let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[];
 const mechanicalToThree=p=>new THREE.Vector3(p.x,p.z,-p.y);
 // Local edge treatment only. The chamfer removes material inside the original
 // box envelope; central flat mating faces and all original locations are kept.
@@ -234,6 +234,7 @@ function buildAdvancedParts(){
  advanceMoving.push(formedGuardRing(tiltGroup,286.4,201.4,284,200,91,94,'rear-upper-clamp',true));
  upperCornerClosures();
  liftGroup=carriage;
+ buildSafetyDevices();
  const bellowsMat=material(0xa8a8a5,{roughness:1,side:THREE.DoubleSide});
  bellowsMesh=new THREE.Mesh(bellowsGeometry(pose(0)),bellowsMat);scene.add(bellowsMesh);
  // Original constant-length lift U-loop and an independent hinge bend segment.
@@ -244,6 +245,45 @@ function buildAdvancedParts(){
  box(liftGroup,3,4,5,110.5,82,68,silver);box(liftGroup,4,4,5,108,82,68,rubber);
  box(tiltGroup,3,3,5,110.5,89,68,silver);box(tiltGroup,4,3,5,108,89,68,rubber);
  hingeCable=new THREE.Mesh(new THREE.TubeGeometry(hingeCableCurve(pose(0)),32,1.1,8,false),rubber);scene.add(hingeCable);
+}
+// D5-2 lift safety train, approved as combination 1 (DEC-002): energised brake
+// for holding, sprung pawls on fixed racks for run-away arrest independent of
+// the drive, and swing-out service props. Concept geometry only: tooth
+// profiles, solenoid and brake sizing, prop stiffness and impact behaviour
+// stay UNVERIFIED until mass and duty data exist.
+function buildSafetyDevices(){
+ for(const sign of [-1,1]){
+  // Fixed rack beside each lead screw: X122.5…125.0, Y-10…6, Z6…83. Teeth stop
+  // at Z83 so nothing fixed enters the stored tray envelope (floor Z86) west of
+  // X122; the top plate reaches over the screw to the side spine. Both gaps
+  // avoid the nut and guide arms, the belt run and the bearing blocks
+  // (verify-safety-devices).
+  box(scene,2.5,77,16,sign*123.75,44.5,2,silver).name='pawl-rack-'+(sign>0?'right':'left');
+  for(let z=8;z<=80;z+=4)box(scene,2.3,2,16,sign*121.35,z,2,silver);
+  screwHead(scene,sign*123.75,7,8);screwHead(scene,sign*123.75,7,-4);
+  box(scene,13.8,7,16,sign*132.1,91.5,2,silver);
+  screwHead(scene,sign*137,95,4);
+  // Carriage pawl: a fixed bracket carries the pivot outboard of the tooth
+  // tips (bracket stays west of X120.2 for the whole stroke), the hooked claw
+  // hangs from it and drops onto the tooth upper faces on power loss. The
+  // holding solenoid is a placeholder mounted on the bracket face.
+  box(liftGroup,2.2,2.6,1.6,sign*118.1,38,2,silver);
+  cylinder(liftGroup,1,6,sign*119.2,38,2,dark,'y');
+  box(liftGroup,2.8,7,4,sign*118.1,44.5,2,dark);
+  const pawl=new THREE.Group();pawl.position.set(sign*119.2,38,2);liftGroup.add(pawl);
+  box(pawl,2.4,16,1.6,1.2,-8,0,silver);
+  pawl.userData.pawlSign=sign;pawlPivots.push(pawl);
+  // Service prop hinged at the inner wall; stowed vertical, swung out flat
+  // beneath the carriage beams when the maintenance cover is opened.
+  const prop=new THREE.Group();prop.position.set(sign*146,27,-22);scene.add(prop);
+  box(prop,40,2,16,-sign*20,0,0,silver);
+  prop.rotation.y=sign*Math.PI/2;serviceProps.push(prop);
+ }
+ // Fail-safe brake disc between the M1 output pulley and the motor body,
+ // on fixed brackets clear of the belt run.
+ cylinder(scene,6,5,0,16,64,dark,'x').name='brake-disc';
+ ring(scene,6.4,8.2,6,0,16,64,silver,'x');
+ for(const x of [-8,8])box(scene,2,7.5,4,x,9.75,50,silver);
 }
 function bellowsGeometry(q){
  const perimeter=[],r=4,hw=142,hd=100;
@@ -282,7 +322,12 @@ function updateLowBox(q){
  bellowsMesh.geometry.dispose();bellowsMesh.geometry=bellowsGeometry(q);
  const cable=scene.getObjectByName('harness');cable.geometry.dispose();cable.geometry=new THREE.TubeGeometry(cableCurve(q.lift),48,1.1,8,false);
  hingeCable.geometry.dispose();hingeCable.geometry=new THREE.TubeGeometry(hingeCableCurve(q),32,1.1,8,false);
- window.advancedScene={tiltPivot,tiltGroup,liftGroup,camRollers,bellowsMesh};
+ // Pawls hang engaged only while power is lost; props stay folded until the
+ // maintenance interlock opens. Both are fail-safe displays, not validated
+ // retention behaviour.
+ pawlPivots.forEach(g=>g.rotation.y=g.userData.pawlSign*(powerLost?0:.12));
+ serviceProps.forEach(g=>g.rotation.y=Math.sign(g.position.x)*(serviceOpen?0:Math.PI/2));
+ window.advancedScene={tiltPivot,tiltGroup,liftGroup,camRollers,bellowsMesh,pawlPivots,serviceProps};
 }
 function drawLowSection(q){
  const canvas=$('sectionCanvas');if(!canvas)return;const w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(devicePixelRatio,2);canvas.width=w*dpr;canvas.height=h*dpr;
