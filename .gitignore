@@ -1,0 +1,16 @@
+# Local browser sessions, diagnostic screenshots and development backups.
+.playwright-cli/
+output/
+versions/
+docs/superpowers/
+advanced-scene.generated.js
+
+# Dependencies and local environment files.
+node_modules/
+.env
+.env.*
+*.log
+*.tmp
+__pycache__/
+.DS_Store
+Thumbs.db

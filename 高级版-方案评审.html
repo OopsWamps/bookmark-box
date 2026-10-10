@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="data:,"><title>拾页 · 升降倾斜高级版 / 方案评审</title>
+<style>
+:root{--ink:#161616;--muted:#737373;--line:#ddd;--paper:#fafaf8}
+*{box-sizing:border-box}body{margin:0;color:var(--ink);background:var(--paper);font:14px/1.7 "Microsoft YaHei","PingFang SC",sans-serif}
+button,input{font:inherit}button{cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--ink);padding:10px 16px;border-radius:3px}
+button:hover{border-color:#777}button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid #111;outline-offset:4px}
+a{color:inherit;text-underline-offset:4px}main{max-width:1320px;margin:auto;padding:0 44px 60px}
+header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid var(--line);font-size:12px}
+.brand{font-size:17px;letter-spacing:2px;font-weight:600}.mark{display:inline-block;width:20px;height:22px;margin-right:12px;background:repeating-linear-gradient(90deg,#111 0 3px,transparent 3px 6px);vertical-align:middle}
+.small{color:var(--muted);font-size:11px}.hero{display:grid;grid-template-columns:1fr 285px;gap:36px;padding:42px 0 32px}
+h1,h2,h3{font-weight:400;margin:0}h1{font-family:"Noto Serif SC","SimSun",serif;font-size:42px;line-height:1.5;letter-spacing:2px}
+.hero p{max-width:640px;color:#666;margin:15px 0 0}.spec{padding-top:8px;text-align:right}.spec strong{font-size:16px;font-weight:500}.spec p{font-size:12px;margin:8px 0}
+.tag{display:inline-block;border:1px solid #bbb;padding:3px 9px;font-size:10px;margin-bottom:14px;letter-spacing:1px}
+.review-note{border-left:2px solid #161616;padding:5px 14px;margin:0 0 28px;font-size:12px;color:#666}
+.model-grid{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:28px}
+.stage{background:#f0f0ee;border:1px solid #e3e3e0;border-radius:4px;overflow:hidden;position:relative}
+.stage-head{padding:15px 20px;border-bottom:1px solid #deded9;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+canvas{display:block;width:100%;height:480px}.stage-foot{padding:11px 20px;border-top:1px solid #deded9;font-size:10px;color:#777}
+.legend{display:flex;gap:14px;flex-wrap:wrap}.legend span:before{content:"";display:inline-block;width:12px;height:3px;margin-right:6px;vertical-align:middle;background:#333}.legend span:nth-child(2):before{background:#999}.legend span:nth-child(3):before{height:7px;background:repeating-linear-gradient(90deg,#999 0 1px,transparent 1px 3px)}
+.states{display:grid;gap:9px;margin:15px 0 20px}.state{text-align:left;display:flex;gap:12px;padding:14px 15px}.state span{color:#888;font-size:11px;padding-top:2px}.state[aria-pressed=true]{border-color:#111;background:#fff}.state[aria-pressed=true]:after{content:"";background:#111;border-radius:50%;width:5px;height:5px;margin:auto 0 auto auto}
+.aside-title{font-size:12px;color:#777}.phase-title{font:24px "SimSun",serif;margin:20px 0 12px}.phase-copy{font-size:12px;color:#666;min-height:76px}
+.metrics{margin:16px 0 0}.metrics div{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line)}dt{color:#777;font-size:12px}dd{margin:0;font:21px Georgia,serif}dd small{font:11px sans-serif;margin-left:5px;color:#777}
+.toggle{display:block;font-size:11px;color:#555;margin-top:15px}.toggle input{accent-color:#111;vertical-align:middle;margin-right:6px}
+.controls{display:flex;align-items:center;gap:10px;padding:20px 0 12px;flex-wrap:wrap}.primary{background:#171717;color:#fff;border-color:#171717}
+.progress-wrap{display:flex;align-items:center;gap:16px;padding:5px 0 18px}.progress-wrap label{font-size:11px;color:#777;white-space:nowrap;flex-shrink:0}input[type=range]{width:100%;accent-color:#111}.percent{font-size:11px;min-width:36px;text-align:right;color:#777}
+.sequence{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;font-size:11px;color:#777}.sequence div{padding-top:9px;border-top:2px solid #ccc}.sequence b{font-weight:500;color:#444}
+.section{margin-top:42px;padding-top:26px;border-top:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:20px}h2{font:27px "SimSun",serif}
+.pocket-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:36px}.pocket-figure{margin:0;background:#f0f0ee;border:1px solid #e0e0dc;border-radius:4px}.pocket-figure svg{display:block;width:100%;height:auto}.pocket-figure figcaption{border-top:1px solid #ddd;padding:10px 18px;font-size:11px;color:#777}
+.copy{font-size:12px;color:#666}.copy h3{font-size:16px;color:#222;margin:2px 0 10px}.copy p{margin:12px 0}.copy dl{margin:0}.copy dl div{display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:8px 0}.copy dd{font:12px "Microsoft YaHei",sans-serif;color:#333}
+.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:12px;line-height:1.8}th,td{text-align:left;vertical-align:top;border-bottom:1px solid #ddd;padding:14px 16px 14px 0}th{font-weight:500;color:#777}.recommended td:first-child{font-weight:600}td:first-child{min-width:130px}td:nth-child(2){min-width:90px}
+.engineering{display:grid;grid-template-columns:repeat(3,1fr);gap:25px}.engineering article{padding-right:8px}.engineering h3{font-size:15px}.engineering p{font-size:12px;color:#666;margin:12px 0}
+.badge{font:11px Georgia,serif;display:block;color:#888;margin-bottom:6px}
+details{border-bottom:1px solid #ddd;margin-top:25px;font-size:12px;color:#666}summary{cursor:pointer;padding:16px 0;color:#333}.dossier{padding:5px 0 22px;max-width:1050px}.dossier ul{padding-left:19px}.dossier li{margin:8px 0}.source-list{display:flex;gap:18px;flex-wrap:wrap;padding-top:15px;font-size:11px}
+.decision{background:#efefec;padding:20px 24px;margin-top:34px;font-size:12px;color:#555}.decision strong{display:block;font-size:15px;color:#111;margin-bottom:6px;font-weight:500}footer{display:flex;justify-content:space-between;gap:18px;padding-top:26px;font-size:11px;color:#888}
+@media(max-width:900px){main{padding:0 24px 40px}.model-grid{grid-template-columns:1fr}.aside{display:grid;grid-template-columns:1fr 1fr;gap:22px}.states{margin-top:10px}.phase-copy{min-height:0}.phase-title{margin-top:0}.hero{grid-template-columns:1fr 230px}h1{font-size:34px}.pocket-grid{gap:24px}.engineering{gap:20px}}
+@media(max-width:580px){main{padding:0 18px 35px}header{padding:18px 0}.brand{font-size:14px}.hero{display:block;padding:28px 0 24px}h1{font-size:29px}.hero p{font-size:12px}.spec{text-align:left;margin-top:20px;padding-top:0}.tag{margin-bottom:7px}.spec p{margin:5px 0}.model-grid{gap:20px}canvas{height:380px}.stage-head{padding:12px;font-size:10px}.stage-foot{padding:10px 12px}.aside{display:block}.states{grid-template-columns:repeat(3,1fr);gap:6px}.state{padding:10px 8px;font-size:11px;gap:5px}.state[aria-pressed=true]:after{display:none}.phase-copy{min-height:0}.metrics{display:flex;gap:18px}.metrics div{display:block;flex:1}.metrics dd{margin-top:5px;font-size:22px}.sequence{gap:10px;font-size:9px}.pocket-grid,.engineering{grid-template-columns:1fr}.section{margin-top:32px}.section-head{align-items:flex-start}h2{font-size:24px}.section-head .small{text-align:right;max-width:100px}table{font-size:11px}th,td{padding-right:13px}.decision{padding:16px}.source-list{display:block}.source-list a{display:block;margin-top:8px}footer{display:block}footer a{display:inline-block;margin-top:12px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><span class="mark"></span>拾页 / 书签收纳盒</div><span class="small">ADVANCED · 机构方案评审</span></header>
+<section class="hero"><div><h1>升起，也向目光倾斜。</h1><p>为教育机构的四列理念书签增加 20° 展示倾角。升降驱动带动凸轮槽滚轮，让承托盒、柔性透明盖与卷收机构一起转动。</p></div><div class="spec"><span class="tag">推荐方案 · 待确认</span><br><strong>300 × 222 × 110 mm</strong><p>闭合盒身 · 60 mm 升程 · 20° 倾斜<br>完全展开最高约 234 mm，含脚垫约 235 mm</p></div></section>
+<p class="review-note">本页用于确认高级版的机构与使用动作。侧视动画按毫米坐标运行；支架和防护罩为布局示意，最终三维结构、公差与实物验证仍需深化。</p>
+<section class="model-grid" aria-label="高级版运动演示">
+<div><div class="stage"><div class="stage-head"><span>侧视原理 · 前低后高</span><span id="stageState">倾斜展示</span></div><canvas id="mechanismCanvas" role="img" aria-label="升降与倾斜机构运行侧视图">升降60毫米并联动倾斜20度，随后柔性盖卷收。</canvas><div class="stage-foot"><div class="legend"><span>倾斜模块</span><span>竖直升降车架</span><span>连续柔性防护罩</span></div><div style="margin-top:5px">不同横向位置的部件叠绘；轮廓不代表同一实体剖面。</div></div></div>
+<div class="controls"><button class="primary" id="playBtn">全程演示</button><button id="pauseBtn" disabled>暂停</button><button id="resetBtn">复位</button><span class="small" style="margin-left:auto">约 10 秒 · 可随时拖动</span></div>
+<div class="progress-wrap"><label for="progress">进程</label><input id="progress" type="range" min="0" max="100" step=".1" value="62" aria-label="高级版演示进程"><output class="percent" id="percent">62%</output></div>
+<div class="sequence"><div><b>01</b> 水平起升 18 mm</div><div><b>02</b> 边升边倾至 20°</div><div><b>03</b> 到位后卷盖取用</div></div></div>
+<aside class="aside"><div><div class="aside-title">三个使用状态 · 点击调节</div><div class="states"><button class="state" data-state="0" aria-pressed="false"><span>01</span>平放收纳</button><button class="state" data-state=".62" aria-pressed="true"><span>02</span>倾斜展示</button><button class="state" data-state="1" aria-pressed="false"><span>03</span>开盖取用</button></div><label class="toggle"><input type="checkbox" id="guard" checked>显示连续防护罩</label><label class="toggle"><input type="checkbox" id="labels" checked>显示部件标注</label></div>
+<div><h3 class="phase-title" id="phaseTitle">倾斜展示</h3><p class="phase-copy" id="phaseCopy"></p><dl class="metrics"><div><dt>前支点升程</dt><dd><span id="liftValue">60</span><small>mm</small></dd></div><div><dt>展示倾角</dt><dd><span id="angleValue">20</span><small>°</small></dd></div><div><dt>盖膜卷收</dt><dd><span id="coverValue">0</span><small>mm</small></dd></div></dl><p class="small" style="margin-top:17px">实体机构的倾角由凸轮槽确定。进程滑块用于观察动作，不代表增加独立调角电机。</p></div></aside></section>
+<section class="section"><div class="section-head"><h2>一张书签，一个定位槽。</h2><span class="small">50 × 150 mm · 四列陈列</span></div><div class="pocket-grid">
+<figure class="pocket-figure"><svg viewBox="0 0 550 420" role="img" aria-label="四个52乘152毫米定位凹槽俯视图"><defs><pattern id="ribs" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0V4" stroke="#aaa" stroke-width="1"/></pattern></defs><g transform="translate(45 48) scale(1.88)"><path d="M-0 0H237V14H244V172H0Z" fill="#fff" stroke="#222" stroke-width=".8"/><g fill="#e7e7e4" stroke="#888" stroke-width=".5"><rect x="9" y="10" width="52" height="152" rx="2"/><rect x="67" y="10" width="52" height="152" rx="2"/><rect x="125" y="10" width="52" height="152" rx="2"/><rect x="183" y="10" width="52" height="152" rx="2"/></g><g fill="#fff" stroke="#333" stroke-width=".35"><rect x="10" y="11" width="50" height="150" rx=".5"/><rect x="68" y="11" width="50" height="150" rx=".5"/><rect x="126" y="11" width="50" height="150" rx=".5"/><rect x="184" y="11" width="50" height="150" rx=".5"/></g><g fill="#ccc"><path d="M26 162h18v5H26zM84 162h18v5H84zM142 162h18v5H142zM200 162h18v5H200z"/></g><g fill="url(#ribs)"><path d="M11 156h48v5H11zM69 156h48v5H69zM127 156h48v5H127zM185 156h48v5H185z"/></g><g font-family="Microsoft YaHei,sans-serif" fill="#444" text-anchor="middle"><text x="35" y="57" font-size="8">好奇</text><text x="93" y="57" font-size="8">思考</text><text x="151" y="57" font-size="8">表达</text><text x="209" y="57" font-size="8">成长</text><text x="122" y="-10" font-size="6">前侧 / 倾斜低端 · 连续挡边</text><text x="122" y="183" font-size="6">后侧 / 高端 · 盲取纸凹口与一体软限位</text></g><g stroke="#ccc" stroke-width=".4"><path d="M26 76h18M26 82h18M84 76h18M84 82h18M142 76h18M142 82h18M200 76h18M200 82h18"/></g></g></svg><figcaption>俯视示意 · 后端轻压向前基准边；盲取纸凹口保留封闭槽底。</figcaption></figure>
+<div class="copy"><h3>凹槽负责挡住，柔性限位负责消除游隙。</h3><p>槽内留装入余量，书签下沿抵住连续挡边。高端使用不可拆的一体软限位，轻压书签堆向前定位；倾斜过程中不会仅靠摩擦固定。</p><dl><div><dt>每槽名义尺寸</dt><dd>52 × 152 × 4 mm · 内角 R2</dd></div><div><dt>示例书签堆厚度</dt><dd>≤ 3 mm · 顶部低于槽口 1 mm</dd></div><div><dt>槽间实体 / 常规侧边</dt><dd>6 mm / 9 mm</dd></div><div><dt>后端取纸凹口</dt><dd>约 18 mm 宽 · 盲凹口</dd></div></dl><p>6 mm 托盘开槽后，槽底名义厚度剩 2 mm，需用材料和筋位复核刚度。右前电机缺口处局部侧壁也仅约 2 mm，高级版应加强或调整该缺口。软限位的压力需按书签材质试验，避免压痕。</p></div></div></section>
+<section class="section"><div class="section-head"><h2>倾斜机构，如何取舍。</h2><span class="small">以固定展示角、低速轻载为前提</span></div><div class="table-wrap"><table><thead><tr><th>候选机构</th><th>新增成本</th><th>安全与寿命取舍</th><th>适合程度</th></tr></thead><tbody>
+<tr class="recommended"><td>封闭凸轮槽滚轮<br><span class="small">推荐 · 前侧双耳轴</span></td><td>低至中</td><td>沿用升降驱动，倾角随位置确定。滚动接触，槽板可更换；需要核算侧向载荷、接触应力与槽壁磨损。</td><td>适合固定 20°，较易集中封装。</td></tr>
+<tr><td>非平行四连杆</td><td>中</td><td>转动副可耐用；铰点较多，累计间隙、杆件扫掠和夹点需要处理。</td><td>当前紧凑盒体中布置较困难。</td></tr>
+<tr><td>第二电动推杆</td><td>高</td><td>可独立调角；新增执行器、限位、互锁与失电保持，维护项目更多。</td><td>适合确有独立多角度调节需求的版本。</td></tr>
+</tbody></table></div><p class="small">相对成本为结构比较，尚无供应商报价。寿命不能仅由机构类型确定，需结合材料、载荷、使用频次和循环试验；本页不承诺具体年限。</p></section>
+<section class="section"><div class="section-head"><h2>把转动缝隙，留在防护内。</h2><span class="small">成人操作 · 儿童取用</span></div><div class="engineering"><article><span class="badge">01 / 连接与保持</span><h3>升降与倾斜分层承载</h3><p>丝杠螺母和竖直导向车架保持竖直；托盘下横梁连接两端同轴耳轴。主侧封闭槽确定倾角，副侧带受控间隙的槽作为防翻落备份，避免双侧无间隙约束导致卡滞。</p><p>备份槽不能替代升降防坠。实物需独立的失电机械保持或制动，以及检修支撑。</p></article><article><span class="badge">02 / 封装与动作</span><h3>竖裙罩加连续柔性罩</h3><p>竖裙罩随车架平移，上缘调整至 80＋升程。倾斜模块和竖裙罩之间加连续风琴罩，转轴、曲柄和槽滚轮均位于防护内，外侧封闭刚性罩限制触达。</p><p>先起升 18 mm 避开箱口，再联动倾斜。成人操作、维护盖联锁、遮挡停机和解除后重新发起动作需要实物验证。</p></article><article><span class="badge">03 / 紧凑与耐久</span><h3>卷盒上移并前置</h3><p>卷盒中心由旧版后下挂位置改为 Y＝72、Z＝66 mm。托盘、透明膜和辊轴作为同一倾斜模块，膜的局部路径不随角度变化；新卷盒需重新安排出膜缝与弹簧预紧。</p><p>膜、软限位与柔性防护罩都应做清洁和反复弯折测试。升降 U 形电缆之外，倾斜接点需单独留柔性线缆弯曲段。</p></article></div>
+<details><summary>展开尺寸校核、载荷关注点与资料来源</summary><div class="dossier"><p>机械坐标：X 向右，Y 向后，Z 向上，单位 mm。前耳轴 Y＝−82、Z＝100＋升程；向下曲柄长 65 mm；滚轮外径参考 10 mm，主槽名义宽 10.3 mm。曲柄及槽板的横向层次仍需最终三维建模。</p><ul>
+<li>水平起升 18 mm；随后 42 mm 行程联动至 20°。角速度采用 25% 平滑升速、50% 匀速、25% 平滑降速的曲线，起止角速度和角加速度为零。</li>
+<li>独立平面校核：6001 个升程采样；凸轮中心线最小曲率半径约 10.73 mm，按槽半宽 5.15 mm 偏置后约 5.58 mm，未出现平面偏置尖点。</li>
+<li>最大压力角约 46.52°，会产生明显侧向载荷，必须核算滚轮接触应力、槽板刚度、耳轴扭矩和升降电机余量。角度和槽形可在试制反馈后优化。</li>
+<li>槽末端滚轮中心约 Y＝−59.77、Z＝98.92 mm；加滚轮半径、槽间隙及 3 mm 槽壁后最高约 107.07 mm，名义上能收入 110 mm 箱体。</li>
+<li>新卷盒外半径 18 mm，与导向辊外包络初始间隔约 4.41 mm；距托盘底 8 mm；弹簧盒距固定背板后缘 3 mm；卷盒距后导柱上座 7 mm。</li>
+<li>倾斜过程中卷盒后缘最大约 Y＝93.71 mm。前硬罩底设为 Z＝91 mm，对竖裙罩上缘最小名义间隔约 3.16 mm；该间隙由连续防护罩隔离，不能据此认定防夹安全。</li>
+<li>360 mm 膜长守恒校核覆盖 1841 个卷收位置；卷径约 28.78 → 29.98 mm。新出膜方向约 3°—6°，概念预留 0°—9°缝口并设置软唇边，需按公差确认。</li>
+<li>安全和寿命验证需包括受阻停机、失电保持、倾角失效、书签取用推力、整体抗倾覆、儿童触达、槽壁磨损、耳轴间隙及柔性罩疲劳。动画不是安全认证或加工图。</li>
+</ul><div class="source-list"><a href="https://tech.thk.com/en/products/pdfs/en_a19_020.pdf" target="_blank" rel="noreferrer">THK · 凸轮滚轮尺寸参考</a><a href="https://www.igus.com/linear-bearings/lead-screw-units-trapezoid-spindle-technical-data" target="_blank" rel="noreferrer">igus · 丝杠与额外导向承载</a><a href="https://www.hse.gov.uk/agriculture/topics/machinery/safe-use-4.htm" target="_blank" rel="noreferrer">HSE · 机械防护与联锁原则</a></div></div></details></section>
+<div class="decision"><strong>建议确认：固定 20° 凸轮联动高级版。</strong>保留 110 mm 闭合盒高，增加四个定位槽及不可拆柔性限位。确认后再把该机构深化成完整三维高级版；本页先用于评审动作、空间和机构选择。</div>
+<footer><span>拾页 · 高级版方案评审 / 2026.10.10</span><a href="index.html?v=compact-guarded">打开紧凑防护基础版 →</a></footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id),TAU=Math.PI*2,RAD=Math.PI/180;
+const clamp=t=>Math.max(0,Math.min(1,t)),ease=t=>{t=clamp(t);return t*t*(3-2*t);};
+function tiltMotion(t){if(t<=0)return 0;if(t>=1)return 1;const b=.25,v=1/(1-b);if(t<b)return v/2*(t-b/Math.PI*Math.sin(Math.PI*t/b));if(t<=1-b)return v*(t-b/2);return 1-tiltMotion(1-t);}
+function rollGeometry(retract){const dy=-20,dz=-28,d=Math.hypot(dy,dz);let radius=15,ny,nz,a,arc,tangent,wound;for(let i=0;i<45;i++){const u=(12-radius)/d,v=Math.sqrt(1-u*u);ny=u*dy/d-v*dz/d;nz=u*dz/d+v*dy/d;a=Math.atan2(nz,ny);arc=12*(Math.PI/2-a);tangent=Math.sqrt(d*d-(12-radius)**2);wound=360-(184-retract)-arc-tangent;radius=Math.sqrt(196+.3*wound/Math.PI);}return {radius,ny,nz,a,arc,tangent,wound};}
+function pose(progress){const p=clamp(progress),lift=60*ease(p/.62),angle=20*RAD*tiltMotion((lift-18)/42),retract=184*ease((p-.62)/.38);return {p,lift,angle,angleDegrees:angle/RAD,retract,roll:rollGeometry(retract),cam:{y:-82+65*Math.sin(angle),z:100+lift-65*Math.cos(angle)}};}
+function transform(y,z,q){return {y:-82+(y+82)*Math.cos(q.angle)-(z-100)*Math.sin(q.angle),z:100+q.lift+(y+82)*Math.sin(q.angle)+(z-100)*Math.cos(q.angle)};}
+function filmPath(q){const r=q.roll,pts=[{y:-92+q.retract,z:106},{y:92,z:106}];for(let i=1;i<=50;i++){const a=Math.PI/2+(r.a-Math.PI/2)*i/50;pts.push({y:92+12*Math.cos(a),z:94+12*Math.sin(a)});}pts.push({y:72+r.radius*r.ny,z:66+r.radius*r.nz});return pts;}
+window.AdvancedReview={pose,transform,filmPath,tiltMotion};
+let progress=.62,playing=false,target=null,last=0;
+function update(){const q=pose(progress);$('progress').value=(progress*100).toFixed(1);$('percent').textContent=Math.round(progress*100)+'%';$('liftValue').textContent=q.lift.toFixed(1);$('angleValue').textContent=q.angleDegrees.toFixed(1);$('coverValue').textContent=q.retract.toFixed(0);
+let title,copy;if(progress<.001){title='平放收纳';copy='四列书签平放在定位槽中，柔性盖闭合。耳轴、曲柄和卷收机构收在盒体防护内。';}else if(q.lift<18-.01){title='水平起升';copy='先保持水平起升 18 mm，让前护罩避开箱口，为倾斜运动留出空间。';}else if(progress<.6199){title='升降联动倾斜';copy='原升降驱动继续抬升，滚轮沿固定凸轮槽运动，托盘与卷盖组件整体转向 20°。';}else if(progress<.6201){title='倾斜展示';copy='前支点升起 60 mm，托盘呈 20° 前低后高。四槽与软限位共同保持书签位置，透明盖继续闭合。';}else if(progress<.9999){title='柔性盖卷收';copy='倾斜角保持 20°，透明膜沿导辊卷入后部卷盒。倾斜部件之间的相对关系保持固定。';}else{title='开盖取用';copy='透明盖完成 184 mm 卷收。书签低端有挡边，高端有盲取纸凹口，传动部分仍处于封装内。';}
+$('stageState').textContent=title;$('phaseTitle').textContent=title;$('phaseCopy').textContent=copy;document.querySelectorAll('[data-state]').forEach(b=>b.setAttribute('aria-pressed',Math.abs(progress-Number(b.dataset.state))<.002?'true':'false'));$('pauseBtn').disabled=!playing&&target===null;$('pauseBtn').textContent=playing||target!==null?'暂停':'暂停';draw(q);}
+function draw(q){const canvas=$('mechanismCanvas'),w=canvas.clientWidth,h=canvas.clientHeight,dpr=Math.min(devicePixelRatio||1,2);if(canvas.width!==Math.round(w*dpr)||canvas.height!==Math.round(h*dpr)){canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);}const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);const s=Math.min((w-70)/340,(h-65)/255),ox=w*.48,oy=h-35,xy=(y,z)=>[ox+y*s,oy-z*s];
+function line(points,color='#333',lw=1,dash=[]){c.beginPath();c.setLineDash(dash);points.forEach((p,i)=>{const a=xy(p.y,p.z);i?c.lineTo(...a):c.moveTo(...a);});c.strokeStyle=color;c.lineWidth=lw;c.stroke();c.setLineDash([]);}
+function poly(points,fill,stroke='#777',lw=1){c.beginPath();points.forEach((p,i)=>{const a=xy(p.y,p.z);i?c.lineTo(...a):c.moveTo(...a);});c.closePath();c.fillStyle=fill;c.fill();c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}
+function rect(y,z,ww,hh,fill,stroke='#777'){poly([{y,z},{y:y+ww,z},{y:y+ww,z:z+hh},{y,z:z+hh}],fill,stroke);}
+function circle(y,z,r,fill,stroke='#333',lw=1){const a=xy(y,z);c.beginPath();c.arc(...a,r*s,0,TAU);c.fillStyle=fill;c.fill();c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}
+function text(str,y,z,color='#777',align='left',size=10){c.font=size+'px "Microsoft YaHei",sans-serif';c.textAlign=align;c.fillStyle=color;c.fillText(str,...xy(y,z));}
+function localRect(y,z,ww,hh,fill,stroke='#666'){poly([{y,z},{y:y+ww,z},{y:y+ww,z:z+hh},{y,z:z+hh}].map(p=>transform(p.y,p.z,q)),fill,stroke);}
+function localCircle(y,z,r,fill,stroke='#333',lw=1){const p=transform(y,z,q);circle(p.y,p.z,r,fill,stroke,lw);}
+for(let z=50;z<=250;z+=50){line([{y:-155,z},{y:155,z}],'#deded9',.5);text(z+'',-156,z+3,'#aaa','right',9);}
+text('mm',-158,268,'#aaa','right',9);text('前侧 / 低端',-111,-18,'#777','center');text('后侧 / 高端',105,-18,'#777','center');
+rect(-111,0,222,6,'#333','#333');rect(-111,6,3,104,'#333','#333');rect(108,6,3,104,'#333','#333');line([{y:-111,z:110},{y:111,z:110}],'#bdbdb8',.8,[4,4]);text('盒口 110',116,111,'#777','left',9);
+// The carriage and telescoping sleeve only translate.
+if($('guard').checked){rect(-106.5,8+q.lift,1.2,72,'#ddd','#aaa');rect(105.3,8+q.lift,1.2,72,'#ddd','#aaa');line([{y:-106.5,z:80+q.lift},{y:106.5,z:80+q.lift}],'#aaa',1,[3,4]);}
+line([{y:-18,z:22},{y:-18,z:98}],'#777',3);for(let z=23;z<98;z+=3)line([{y:-21,z},{y:-15,z:z+1}],'#555',.6);
+rect(-24,25+q.lift,12,10,'#666','#555');line([{y:-18,z:30+q.lift},{y:-45,z:30+q.lift},{y:-45,z:86+q.lift},{y:-82,z:100+q.lift}],'#aaa',3);
+rect(-28,14,20,8,'#bbb');rect(-28,6,4,8,'#aaa');rect(-25,98,14,8,'#bbb');
+// Fixed cam contour is narrow and follows the calculated centerline.
+const cam=[];for(let L=0;L<=60.001;L+=.2){const a=20*RAD*tiltMotion((L-18)/42);cam.push({y:-82+65*Math.sin(a),z:100+L-65*Math.cos(a)});}
+line([{y:-100,z:6},{y:-100,z:26},{y:-82,z:35}],'#bbb',5);
+c.lineCap='round';line(cam,'#aaa',16.3*s);line(cam,'#f0f0ee',10.3*s);c.lineCap='butt';line(cam,'#b5b5b0',.6,[2,3]);
+// Flexible shroud closes the perimeter between translating and tilting parts.
+if($('guard').checked){for(const y of [-106.5,106.5]){const start={y,z:80+q.lift},top=transform(y,91,q),pts=[];for(let i=0;i<=10;i++){const t=i/10;pts.push({y:start.y+(top.y-start.y)*t+(i%2?2:-2),z:start.z+(top.z-start.z)*t});}const a=xy(start.y-2,start.z),b=xy(top.y+2,top.z);c.fillStyle='#e5e5e1';c.fillRect(Math.min(a[0],b[0])-3,Math.min(a[1],b[1]),Math.abs(a[0]-b[0])+6,Math.abs(a[1]-b[1]));line(pts,'#888',1);}}
+// All carrier, cover, roller and cassette geometry rotates as a single module.
+localRect(-98,92,172,2,'#eee','#444');localRect(-98,94,10,4,'#fff','#444');localRect(64,94,10,4,'#fff','#444');localRect(-88,94,152,3,'#d4d4cf','#444');
+localRect(-96,86,26,5,'#aaa');localRect(-106.5,91,1,19,'#eee','#888');localRect(106,91,1,19,'#eee','#888');localRect(79,109,28,1,'#eee','#888');
+localCircle(92,94,11.85,'#aaa','#666');localCircle(72,66,18,'#f6f6f3','#777');localCircle(72,66,q.roll.radius,'#ccc','#444');localCircle(72,66,3,'#777','#555');
+line(filmPath(q).map(p=>transform(p.y,p.z,q)),'#313131',1.5);
+const r=q.roll,exit=transform(72+18*Math.cos(4.5*RAD),66+18*Math.sin(4.5*RAD),q);circle(exit.y,exit.z,.7,'#fff','#aaa');
+localRect(-93+q.retract,106,3,1.5,'#111','#111');
+const pivot={y:-82,z:100+q.lift};line([pivot,q.cam],'#222',3);circle(q.cam.y,q.cam.z,5,'#fff','#222',1.3);circle(q.cam.y,q.cam.z,1.3,'#888','#888');circle(pivot.y,pivot.z,4,'#fff','#111',1.5);
+// Angle indicator follows the current tray angle.
+if(q.angle>.001){const a=xy(pivot.y,pivot.z);c.beginPath();c.arc(a[0],a[1],34,0,-q.angle,true);c.strokeStyle='#999';c.lineWidth=1;c.stroke();text(q.angleDegrees.toFixed(0)+'°',pivot.y+40/s,pivot.z+5/s,'#555','left',11);}
+if($('labels').checked){const labels=[['01 双耳轴',pivot,-145,157],['02 凸轮槽 / 滚轮',q.cam,-151,74],['03 四槽承托盒',transform(8,98,q),-5,249],['04 柔性透明盖',transform(-8,106,q),-72,267],['05 上置卷盒',transform(72,66,q),147,173],['06 竖升车架',{y:-45,z:58+q.lift},-149,118]];
+for(const [title,p,y,z]of labels){line([p,{y,z:z-3}],'#999',.7);circle(p.y,p.z,1.1,'#f0f0ee','#888');text(title,y,z,'#555',y>120?'right':'left',w<450?8:10);}
+}
+}
+document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>{playing=false;target=Number(b.dataset.state);if(matchMedia('(prefers-reduced-motion: reduce)').matches){progress=target;target=null;}update();}));
+$('playBtn').addEventListener('click',()=>{progress=0;target=null;playing=true;last=0;update();});
+$('pauseBtn').addEventListener('click',()=>{playing=false;target=null;update();});
+$('resetBtn').addEventListener('click',()=>{progress=0;playing=false;target=null;update();});
+$('progress').addEventListener('input',e=>{progress=Number(e.target.value)/100;playing=false;target=null;update();});
+$('guard').addEventListener('change',update);$('labels').addEventListener('change',update);
+function frame(time){const dt=last?Math.min((time-last)/1000,.05):0;last=time;if(playing){progress=Math.min(1,progress+dt/10);if(progress>=1)playing=false;update();}else if(target!==null){const delta=target-progress,step=dt*.5;if(Math.abs(delta)<=step){progress=target;target=null;}else progress+=Math.sign(delta)*step;update();}requestAnimationFrame(frame);}
+window.addEventListener('resize',()=>draw(pose(progress)));update();requestAnimationFrame(frame);
+</script></body></html>
