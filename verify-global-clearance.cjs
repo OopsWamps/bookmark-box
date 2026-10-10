@@ -13,11 +13,12 @@ const M = require('./advanced-kinematics.js');
 
 const mat = new THREE.MeshBasicMaterial();
 const ctx = {
+  document:{createElement:()=>({width:0,height:0,getContext:()=>new Proxy({},{get:()=>()=>{}}),colorSpace:0,anisotropy:0})},
   THREE, Mechanism: M, pose: M.pose,
   scene: new THREE.Group(), window: {}, powerLost: false, serviceOpen: false,
   silver: mat, dark: mat, white: mat, rubber: mat, glass: mat,
   drivePulleys: [], driveGears: [], screws: [], shellParts: [], fixedGuards: [],
-  material: () => mat, makeCards: () => {}, camRollers: [],
+  material: () => mat, makeCards: () => {}, camRollers: [], buildPartAnnotations: () => {},
   verticalBelt: () => {}, xBearingPlate: () => {}, bellowsGeometry: () => new THREE.BufferGeometry(),
   cableCurve: () => new THREE.CurvePath(), hingeCableCurve: () => new THREE.CurvePath(),
   pullBar: new THREE.Group(), frontBrand: {visible: true}, cut: false, p: 0,
@@ -33,11 +34,17 @@ vm.createContext(ctx);
 const sceneSrc = fs.readFileSync('scene.js', 'utf8');
 const low = fs.readFileSync('lowbox-renderer.js', 'utf8');
 const source = fs.readFileSync('advanced-renderer.js', 'utf8');
-vm.runInContext(sceneSrc.slice(sceneSrc.indexOf('function material'), sceneSrc.indexOf('function flatTexture')), ctx);
-vm.runInContext(low.slice(0, low.indexOf('function horizontalBelt')), ctx);
-vm.runInContext(source, ctx);
+// Reproduce the production splice from build-advanced.cjs exactly: helpers +
+// the foundation half of buildLowBox (the carriage/tilt half is dropped and
+// rebuilt by buildAdvancedParts). Running the full lowbox file would create a
+// duplicate copy of every moving part.
+const buildStart = low.indexOf('function buildLowBox(){'), foundationEnd = low.indexOf('// Moving carriage, connected'), helperStart = low.indexOf('function xBearingPlate'), helperEnd = low.indexOf('function updateLowBox');
+if ([buildStart, foundationEnd, helperStart, helperEnd].some(n => n < 0)) throw Error('renderer splice marker missing');
+const rendererText = low.slice(0, buildStart) + low.slice(helperStart, helperEnd).replace('function cableCurve(', 'function legacyCableCurve(') + low.slice(buildStart, foundationEnd) + '\n buildAdvancedParts();\n}\n' + source;
+vm.runInContext(sceneSrc.slice(sceneSrc.indexOf('let partTag'), sceneSrc.indexOf('/* ANNOTATION_SYSTEM */')), ctx);
+vm.runInContext(rendererText, ctx);
 vm.runInContext(`
-  liftGroup=new THREE.Group(); tiltGroup=new THREE.Group(); tiltPivot=new THREE.Group();
+  const {D,pose}=Mechanism;
   var filmGeo=new THREE.BufferGeometry(); filmGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(82*2*3),3));
   filmMesh=new THREE.Mesh(filmGeo, glass);
   filmEdges=[0,1].map(()=>{const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(82*3),3));return new THREE.Line(g,new THREE.LineBasicMaterial());});
@@ -46,7 +53,11 @@ vm.runInContext(`
   bellowsMesh=new THREE.Mesh(new THREE.BufferGeometry(), silver);
   hingeCable=new THREE.Mesh(new THREE.BufferGeometry(), rubber);
   scene.add(new THREE.Mesh(new THREE.BufferGeometry(), rubber)).children.at(-1).name='harness';
-  buildAdvancedParts();
+  // Full build: buildLowBox creates the fixed foundation (shell, floor, screws,
+  // guide rods, spine, M1, belt) and chains into buildAdvancedParts for the
+  // carriage, tilt module and safety devices. Without the foundation half the
+  // sweep would miss the largest fixed parts entirely.
+  buildLowBox(); // its spliced body ends with buildAdvancedParts()
   // buildAdvancedParts rebuilt the film ribbon on an empty geometry: re-arm it
   // so updateLowBox can write vertex positions (coverPath yields 43 points).
   filmMesh.geometry=new THREE.BufferGeometry();
@@ -65,17 +76,26 @@ vm.runInContext(`
     return g;}
   scene.updateMatrixWorld(true);
   scene.traverse(function(o){
-    if(!o.isMesh||window.softMeshes.has(o))return;
+    if(!o.isMesh)return;
+    if(o.userData.partId)(window.allPartIds=window.allPartIds||new Set()).add(o.userData.partId);
+    if(window.softMeshes.has(o))return;
     var pos=o.geometry&&o.geometry.attributes&&o.geometry.attributes.position;
     if(!pos||!pos.count)return;
     var pts=[],stride=Math.max(1,Math.floor(pos.count/48));
     for(var i=0;i<pos.count;i+=stride)pts.push(new THREE.Vector3().fromBufferAttribute(pos,i).applyMatrix4(o.matrix));
     o.geometry.computeBoundingBox();
     var bs=o.geometry.boundingBox.getSize(new THREE.Vector3()).toArray().map(function(x){return x.toFixed(0)}).join('x');
+    if(o.userData.partId)(window.allPartIds=window.allPartIds||new Set()).add(o.userData.partId);
     window.classified.push({o:o,group:groupOf(o),pts:pts,label:groupOf(o).slice(0,3)+'#'+window.classified.length+' '+(o.name||o.geometry.type)+' ['+bs+']@'+o.position.x.toFixed(0)+','+o.position.y.toFixed(0)+','+o.position.z.toFixed(0)});
   });
 `, ctx);
 const meshes = ctx.window.classified;
+// Part-ownership coverage: every callout partKey must own tagged meshes, else
+// the annotation focus would silently dim everything instead of highlighting.
+const EXPECTED_KEYS = ['film','tray','shell','movingShell','hoodSide','hoodRear','pullBarBeam','floorPlate','screw','screwLowerBearing','screwUpperBearing','guideRod','spine','carriage','m1','belt','m2','gears','tiltBelt','guideRoller','spool','spring','rearPlate','cableLift','camMaster','crank','trunnion','camBackup','bellows','softRib','sleeve','guideArm','rack','pawl','brake','prop'];
+const taggedKeys = ctx.window.allPartIds || new Set();
+const untagged = EXPECTED_KEYS.filter(k => !taggedKeys.has(k));
+if (untagged.length) { console.error('partKey without meshes:', untagged.join(',')); process.exit(1); }
 console.error(`meshes classified: ${meshes.length}, groups: ${[...new Set(meshes.map(m => m.group))].join(',')}`);
 const byGroup = Object.fromEntries(['fixed', 'carriage', 'tilt'].map(g => [g, meshes.filter(m => m.group === g)]));
 const PAIRS = [['fixed', 'carriage'], ['fixed', 'tilt'], ['carriage', 'tilt']];
@@ -149,6 +169,7 @@ const WHITELIST = [
   [/BufferGeometry \[289/, /rear-lower-flange|rear-upper-flange|rear-upper-clamp/], // bellows squeezed by its clamp flanges
   [/LatheGeometry \[\d+x\d+x\d+\]@-?12[1589],100,82/, /CylinderGeometry \[4x17x4\]@-?126,100,82/], // trunnion rings (inner+outer, both sides) ride the fork axles
   [/ExtrudeGeometry \[6x4x36\]/, /ExtrudeGeometry \[6x6x162\]/], // tray frame rests on carriage front bearing arms
+  [/CylinderGeometry \[6x100x6\]/, /LatheGeometry \[10x10x10\]@-?129,30,-?40/], // guide sleeves ride the fixed guide rods
 ];
 const isKnown = e => WHITELIST.some(([ra, rb]) =>
   (ra.test(e.pair) && rb.test(e.pair)) || (rb.test(e.pair) && ra.test(e.pair)));

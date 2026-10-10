@@ -3,17 +3,17 @@ let movingGuards=[],fixedGuards=[],drivePulleys=[],guardTags=[],driveGears=[],sp
 function ring(parent,inner,outer,h,x,y,z,mat,axis='y'){
  const pts=[[inner,-h/2],[outer,-h/2],[outer,h/2],[inner,h/2],[inner,-h/2]].map(p=>new THREE.Vector2(...p));
  const m=new THREE.Mesh(new THREE.LatheGeometry(pts,40),mat);m.position.set(x,y,z);
- if(axis==='x')m.rotation.z=Math.PI/2;parent.add(m);m.castShadow=true;return m;
+ if(axis==='x')m.rotation.z=Math.PI/2;parent.add(m);m.castShadow=true;return tagMesh(m);
 }
 function boredBlock(parent,w,h,d,x,y,z,r,mat){
  const sh=new THREE.Shape();sh.moveTo(-w/2,-d/2);sh.lineTo(w/2,-d/2);sh.lineTo(w/2,d/2);sh.lineTo(-w/2,d/2);sh.closePath();
  const hole=new THREE.Path();hole.absarc(0,0,r,0,Math.PI*2,true);sh.holes.push(hole);
- const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,curveSegments:24}),mat);m.rotation.x=Math.PI/2;m.position.set(x,y+h/2,z);parent.add(m);return m;
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:h,bevelEnabled:false,curveSegments:24}),mat);m.rotation.x=Math.PI/2;m.position.set(x,y+h/2,z);parent.add(m);return tagMesh(m);
 }
 function roundRect(w,d,r){const s=new THREE.Shape(),x=-w/2,y=-d/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+d-r);s.quadraticCurveTo(x+w,y+d,x+w-r,y+d);s.lineTo(x+r,y+d);s.quadraticCurveTo(x,y+d,x,y+d-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);return s;}
 function roundedShell(parent,w,d,bottom,top,t,r,mat){
  const s=roundRect(w,d,r),hole=roundRect(w-2*t,d-2*t,Math.max(.3,r-t));s.holes.push(hole);
- const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:top-bottom,bevelEnabled:false,curveSegments:10}),mat);m.rotation.x=Math.PI/2;m.position.y=top;parent.add(m);m.castShadow=true;m.receiveShadow=true;return m;
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:top-bottom,bevelEnabled:false,curveSegments:10}),mat);m.rotation.x=Math.PI/2;m.position.y=top;parent.add(m);m.castShadow=true;m.receiveShadow=true;return tagMesh(m);
 }
 function screwHead(parent,x,y,z){return cylinder(parent,1.3,.7,x,y,z,dark);}
 function horizontalBelt(centers,r,z){
@@ -23,7 +23,7 @@ function horizontalBelt(centers,r,z){
   for(let k=0;k<=24;k++){const t=a1+(a2-a1)*k/24;points.push(new THREE.Vector3(b.x+r*Math.cos(t),z,-(b.y+r*Math.sin(t))));}
  }points.push(points[0].clone());
  const pos=[],idx=[];points.forEach(p=>pos.push(p.x,z-1.5,p.z,p.x,z+1.5,p.z));for(let i=0;i<points.length-1;i++){const j=i*2;idx.push(j,j+1,j+2,j+1,j+3,j+2);}
- const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,material(0x292929,{side:THREE.DoubleSide}));scene.add(m);
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();const m=new THREE.Mesh(g,material(0x292929,{side:THREE.DoubleSide}));scene.add(tagMesh(m));
 }
 function verticalBelt(x){
  const pts=[];for(let k=0;k<=28;k++){let a=Math.PI/2-Math.PI*k/28;pts.push({y:D.guideY+3*Math.cos(a),z:103+3*Math.sin(a)});}
@@ -32,8 +32,8 @@ function verticalBelt(x){
 }
 function buildLowBox(){
  buildPartAnnotations();
- box(scene,D.boxW,6,D.boxD,0,3,0,dark);
- shellParts.push(roundedShell(scene,D.boxW,D.boxD,6,110,3,6,dark));
+ partTag='floorPlate';box(scene,D.boxW,6,D.boxD,0,3,0,dark);
+ partTag='shell';shellParts.push(roundedShell(scene,D.boxW,D.boxD,6,110,3,6,dark));
  // Continuous soft wiping lip; dimensions are running clearances, not finger-safety claims.
  fixedGuards.push(roundedShell(scene,294,216,108.5,110,1.2,3,rubber));
  for(const x of [-126,126])for(const y of [-86,86])box(scene,24,1,18,x,-.5,-y,rubber);
@@ -42,26 +42,26 @@ function buildLowBox(){
  // Side spines transfer both upper and lower bearing loads into a bolted base flange.
  for(const x of [-129,129]){
   const sign=Math.sign(x);
-  box(scene,3,100,82,sign*137.5,56,-11,silver);box(scene,18,3,86,sign*130,7.5,-11,silver);
+  partTag='spine';box(scene,3,100,82,sign*137.5,56,-11,silver);box(scene,18,3,86,sign*130,7.5,-11,silver);
   for(const yy of [-27,48])screwHead(scene,sign*130,9.4,-yy);
   // Lower fixed bearing bridges the drive belt; its rear foot and outer spine leave the pulley unobstructed.
-  box(scene,18,8,3,x,10,10,silver);
+  partTag='screwLowerBearing';box(scene,18,8,3,x,10,10,silver);
   boredBlock(scene,18,8,20,x,18,18,5.15,silver);
   ring(scene,3,5.1,7,x,18,18,dark);
-  screws.push(threaded(scene,x,18,22,98,3.5,2));
+  partTag='screw';screws.push(threaded(scene,x,18,22,98,3.5,2));
   cylinder(scene,3,14,x,15,18,silver);cylinder(scene,3,8,x,102,18,silver);
-  const pl=cylinder(scene,5,3,x,11,18,rubber);drivePulleys.push(pl);
-  boredBlock(scene,10,8,14,x,102,18,4.05,silver);box(scene,6,8,10,sign*136,102,18,silver);ring(scene,3,4,6,x,102,18,dark);
+  partTag='belt';const pl=cylinder(scene,5,3,x,11,18,rubber);drivePulleys.push(pl);
+  partTag='screwUpperBearing';boredBlock(scene,10,8,14,x,102,18,4.05,silver);box(scene,6,8,10,sign*136,102,18,silver);ring(scene,3,4,6,x,102,18,dark);
   // Rear guide rod: a clamped foot touches the base; the upper collar attaches to the same spine.
-  boredBlock(scene,18,16,14,x,14,-40,3.1,silver);cylinder(scene,3,100,x,56,-40,silver);
+  partTag='guideRod';boredBlock(scene,18,16,14,x,14,-40,3.1,silver);cylinder(scene,3,100,x,56,-40,silver);
   boredBlock(scene,10,8,14,x,102,-40,3.1,silver);box(scene,6,8,10,sign*136,102,-40,silver);
-  for(const yy of [-18,40])for(const zz of [18,102])cylinder(scene,1.2,4,sign*137,zz,-yy,dark,'x');
+  partTag='spine';for(const yy of [-18,40])for(const zz of [18,102])cylinder(scene,1.2,4,sign*137,zz,-yy,dark,'x');
  }
- horizontalBelt([{x:129,y:-18},{x:-129,y:-18},{x:0,y:-64}],5,11);
+ partTag='belt';horizontalBelt([{x:129,y:-18},{x:-129,y:-18},{x:0,y:-64}],5,11);
  // M1 has a real bridge bracket, continuous output shaft, and a closed three-pulley belt.
- for(const x of [-13,13])box(scene,3,38,12,x,25,49,silver);
+ partTag='m1';for(const x of [-13,13])box(scene,3,38,12,x,25,49,silver);
  box(scene,29,4,32,0,44,58,silver);cylinder(scene,9,22,0,31,64,dark);cylinder(scene,2.5,13,0,15.5,64,silver);cylinder(scene,5,3,0,11,64,rubber);
- box(scene,55,12,20,0,12,86,dark); // sealed low-voltage control module
+ partTag='shell';box(scene,55,12,20,0,12,86,dark); // sealed low-voltage control module
  // Moving carriage, connected by continuous stems and nut/guide arms.
  liftGroup=new THREE.Group();scene.add(liftGroup);
  const trayShape=new THREE.Shape([[-122,-98],[115,-98],[115,-84],[122,-84],[122,74],[-122,74]].map(v=>new THREE.Vector2(...v)));trayShape.closePath();const tray=new THREE.Mesh(new THREE.ExtrudeGeometry(trayShape,{depth:6,bevelEnabled:false}),white);tray.rotation.x=-Math.PI/2;tray.position.y=92;liftGroup.add(tray);
@@ -156,12 +156,12 @@ function spurGear(z,phase){
   pts.push(new THREE.Vector2(rd*Math.cos(c+ang),rd*Math.sin(c+ang)));
  }
  const sh=new THREE.Shape(pts);sh.closePath();const hole=new THREE.Path();hole.absarc(0,0,1.5,0,Math.PI*2,true);sh.holes.push(hole);
- const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:2,bevelEnabled:false}),silver);mesh.rotation.y=Math.PI/2;mesh.position.set(137.5,z,92);liftGroup.add(mesh);return mesh;
+ const mesh=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:2,bevelEnabled:false}),silver);mesh.rotation.y=Math.PI/2;mesh.position.set(137.5,z,92);liftGroup.add(mesh);return tagMesh(mesh);
 }
 function ribbonMesh(points,width,mat){
  const pos=[],indices=[];points.forEach(v=>pos.push(-width/2,v.z,-v.y,width/2,v.z,-v.y));
  for(let i=0;i<points.length-1;i++){const a=i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
- const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geom.setIndex(indices);geom.computeVertexNormals();return new THREE.Mesh(geom,mat);
+ const geom=new THREE.BufferGeometry();geom.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geom.setIndex(indices);geom.computeVertexNormals();return tagMesh(new THREE.Mesh(geom,mat));
 }
 function polylineCurve(points){const c=new THREE.CurvePath();for(let i=1;i<points.length;i++)c.add(new THREE.LineCurve3(points[i-1],points[i]));return c;}
 function cableCurve(lift){const z=36+lift/2,path=new THREE.CurvePath();path.add(new THREE.LineCurve3(new THREE.Vector3(100,80,68),new THREE.Vector3(100,z,68)));const pts=[];for(let i=0;i<=40;i++){const a=Math.PI+Math.PI*i/40;pts.push(new THREE.Vector3(106+6*Math.cos(a),z+6*Math.sin(a),68));}for(let i=1;i<pts.length;i++)path.add(new THREE.LineCurve3(pts[i-1],pts[i]));path.add(new THREE.LineCurve3(new THREE.Vector3(112,z,68),new THREE.Vector3(112,88+lift,68)));return path;}

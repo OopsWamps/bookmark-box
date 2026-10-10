@@ -5,6 +5,10 @@ const host=$('sceneHost');
 let p=0,target=0,moving=false,queue=[],hold=0,last=0,cut=false,dirty=true,obstacle=false,serviceOpen=false,restartRequired=false;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let scene,renderer,camera,liftGroup,frontBrand,pullBar,filmMesh,filmEdges,filmRoll,reelGroup,cassetteShell;
+// Part-ownership tag: while set, every mesh created by the shared helpers
+// carries userData.partId so the annotation focus can select parts exactly.
+let partTag=null;
+const tagMesh=m=>{if(partTag)m.userData.partId=partTag;return m;};
 const shellParts=[],screws=[],tags=[];
 let azimuth=.73,elevation=.50,zoom=1,viewMode='iso';
 const states=['平放收纳','升起展示','开盖取用'];
@@ -23,13 +27,13 @@ function box(parent,w,h,d,x,y,z,mat,edges=false) {
   const geometry=new THREE.BoxGeometry(w,h,d), mesh=new THREE.Mesh(geometry,mat);
   mesh.position.set(x,y,z); mesh.castShadow=true; mesh.receiveShadow=true;parent.add(mesh);
   if(edges){ const e=new THREE.LineSegments(new THREE.EdgesGeometry(geometry),new THREE.LineBasicMaterial({color:0x777777,transparent:true,opacity:.33}));mesh.add(e);}
-  return mesh;
+  return tagMesh(mesh);
 }
 function cylinder(parent,r,h,x,y,z,mat,axis='y',r2=r){
   const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r,r2,h,24),mat);
   if(axis==='x')mesh.rotation.z=Math.PI/2;
   if(axis==='z')mesh.rotation.x=Math.PI/2;
-  mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
+  mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return tagMesh(mesh);
 }
 function threaded(parent,x,z,bottom,top,r,pitch){
   const g=new THREE.Group();g.position.set(x,0,z);parent.add(g);
@@ -54,7 +58,7 @@ function makeCards(){
       const chars=[...phrases[i][1]];chars.forEach((c,j)=>ctx.fillText(c,28+(j%8)*23,570+Math.floor(j/8)*31));
       ctx.strokeStyle='#aaa';ctx.beginPath();ctx.moveTo(25,655);ctx.lineTo(w-25,655);ctx.stroke();ctx.fillStyle='#444';ctx.font='18px "Microsoft YaHei",sans-serif';ctx.fillText('与每一种可能相遇',25,702);
     });
-    const face=new THREE.Mesh(new THREE.PlaneGeometry(50,150),new THREE.MeshBasicMaterial({map:tx,toneMapped:false}));face.rotation.x=-Math.PI/2;face.position.set(x,101.1,12);liftGroup.add(face);
+    const face=tagMesh(new THREE.Mesh(new THREE.PlaneGeometry(50,150),new THREE.MeshBasicMaterial({map:tx,toneMapped:false})));face.rotation.x=-Math.PI/2;face.position.set(x,101.1,12);liftGroup.add(face);
   });
 }
 /* ANNOTATION_SYSTEM */

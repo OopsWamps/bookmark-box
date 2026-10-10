@@ -2,6 +2,7 @@
 
 交互式三维机构设计项目（书签收纳盒凸轮倾斜高级版）。改设计的对象是源文件，不是 785KB 的交付 HTML。
 
+- 构件归属：渲染器构建时用 `partTag` 给每个 mesh 写 `userData.partId`（36 个部件键），标注聚焦按它精确选择构件；`verify-global-clearance.cjs` 末尾有 36 键覆盖断言，新构件必须打标
 - 权威源文件：`advanced-kinematics.js`、`advanced-renderer.js`、`advanced-annotations.js`、`advanced-engineering-details.html`、`lowbox-renderer.js`、`scene.js`、`kinematics.js`、`annotations.js`、`ui-template.html`、`build.cjs`、`build-advanced.cjs`
 - 改源文件后重建：`node build-advanced.cjs`（高级版）、`node build.cjs`（基础版）；禁止手改交付 HTML
 - 高级版页面共享 `scene.js` 的闭包作用域：跨模块的演示状态（powerLost、serviceOpen 等）经 `build-advanced.cjs` 的 replace 注入，基础版不受影响
