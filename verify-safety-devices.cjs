@@ -117,18 +117,18 @@ const tipX = 2.4 * Math.cos(0.12) - 16 * Math.sin(0.12);
 assert(tipX + 119.2 < 120.2, `held claw tip (${(tipX + 119.2).toFixed(2)}) must clear the tooth tips`);
 const innerX = 16 * Math.sin(0.12);
 assert(innerX + 119.2 > 117, `held claw inner edge (${(119.2 - innerX).toFixed(2)}) must clear the beam`);
-// 4. Service prop deployed: hinged at the inner wall (X146) exactly as
-// rendered, 2 mm drop onto the beam underside. The arm necessarily crosses
-// the vertical skirt root plane (X±142): that cut-out is a registered
-// interface issue (RSK-6), reported below instead of silently passed.
-const prop = [106, 146, 14, 30, 26, 28];
+// 4. Service prop deployed: hinged on the spine inner face (X135) exactly as
+// rendered, 2 mm drop onto the beam underside. The arm stays inboard of the
+// side spine (X136..139), the skirt shells (X±142) and the racks — the former
+// RSK-6 wall/skirt crossings are structurally gone.
+const prop = [105, 135, 14, 30, 26, 28];
+assert(prop[1] <= 136, 'prop arm must not enter the side spine (X136..139)');
+assert(prop[1] < 141.6, 'prop arm must not reach the skirt root plane (RSK-6 resolved)');
 for (let i = 0; i <= 30; i++) {
   const lift = 60 * i / 30;
   const beam = raised([111, 117, -29, 62, 30, 84], lift);
   assert(!overlap(prop, beam, 0), `prop collides with beam at lift ${lift}`);
   results.pairs.push({pair: 'prop/beam', lift, gap: +gapOf(prop, beam).toFixed(3)});
-  const skirt = [141.6, 146, -106.5, 106.5, 8 + lift, 80 + lift];
-  if (overlap(prop, skirt, 0)) results.known.push({issue: 'RSK-6 prop/skirt crossing', lift, note: 'registered interface: skirt needs a latched cut-out at the prop swing zone'});
 }
 assert(gapOf(prop, [111, 117, -29, 62, 30, 84]) === 2, 'prop support face must sit 2 mm under the beam');
 // 5. Fixed teeth never enter the stored tray envelope west of X122.

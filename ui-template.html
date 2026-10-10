@@ -50,6 +50,7 @@
           </div>
           <div id="sceneHost" aria-label="可旋转的书签收纳盒三维模型">
             <div class="scene-corner"><span id="sceneStatus" role="status" aria-live="polite">平放收纳</span></div>
+            <div id="interlockBanner" class="interlock-banner" aria-hidden="true"></div>
             <div class="scene-footer">
               <span class="scene-drag"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6.5 8V4.8a1.5 1.5 0 0 1 3 0V10 6.8a1.4 1.4 0 0 1 2.8 0V10 8a1.4 1.4 0 0 1 2.8 0v4c0 3-1.9 5-4.8 5H9c-1.4 0-2.5-.7-3.3-1.8L2.8 11a1.5 1.5 0 0 1 2.2-1.9l1.5 1.5V8Z"/></svg>拖动旋转 · 滚轮缩放</span>
               <span class="scene-scale">可切换侧视，观察运动关系</span>
@@ -57,8 +58,9 @@
           </div>
           <section class="annotation-panel" aria-label="部件标注与目录">
             <div class="annotation-toolbar"><label for="annotationGroup">标注分组<select id="annotationGroup"><option value="view">当前视图</option><option value="support">支承与升降</option><option value="drive">电机与传动</option><option value="cover">柔性卷盖</option><option value="guard">外观与防护</option></select></label><span class="annotation-hint">编号引线随部件运动 · 点选查看作用</span></div>
+            <input id="partSearch" class="part-search" type="search" placeholder="搜索部件名称或编号" aria-label="搜索部件名称或编号">
             <p id="partInfo" class="part-info" role="status" aria-live="polite">点选模型编号或部件目录，查看名称与作用。</p>
-            <details class="part-directory"><summary>部件目录<span id="partCount"></span></summary><div id="partsList" class="parts-list"></div></details>
+            <details id="partDirectory" class="part-directory"><summary>部件目录<span id="partCount"></span></summary><div id="partsList" class="parts-list"></div></details>
           </section>
           <div class="playback" aria-label="运动演示控制">
             <div class="playback-top">

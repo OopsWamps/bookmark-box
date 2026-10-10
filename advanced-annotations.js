@@ -1,4 +1,4 @@
-let selectedPart=null,annotationSvg;
+let selectedPart=null,annotationSvg,searchQuery='';
 // Focus/dim: selecting a callout keeps its own meshes readable and blurs the
 // rest. Mesh membership is decided geometrically from the callout's anchor
 // point (bbox containment, nearest-cluster fallback) because the part specs
@@ -93,6 +93,10 @@ function buildPartAnnotations(){
   const t={id,name,group,mode,point,detail,e,line,dot,entry};tags.push(t);e.addEventListener('click',()=>selectPart(t));entry.addEventListener('click',()=>selectPart(t));
  });
  $('partCount').textContent=tags.length+' 个部件';
+ $('partSearch').addEventListener('input',e=>{
+  searchQuery=e.target.value.trim();$('partInfo').textContent=searchQuery?'搜索中：'+searchQuery:'点选模型编号或部件目录，查看名称与作用。';
+  $('partDirectory').open=!!searchQuery;sync();
+ });
  $('annotationGroup').addEventListener('change',()=>{
   const group=$('annotationGroup').value;if(group!=='view'){cut=group!=='guard';$('cutaway').checked=cut;}
   $('labels').checked=true;selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';sync();
@@ -101,10 +105,10 @@ function buildPartAnnotations(){
 function selectPart(t){
  if(selectedPart===t.id){ // second tap on the same callout clears the focus
   selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';
-  $('labels').checked=true;$('annotationGroup').value='view';sync();return;
+  $('labels').checked=true;sync();return;
  }
  selectedPart=t.id;applyFocus(t);
- $('labels').checked=true;$('annotationGroup').value='view';
+ $('labels').checked=true; // keep the active group filter untouched
  if(t.mode!=='always'){cut=t.mode==='inside';$('cutaway').checked=cut;}
  $('partInfo').textContent=t.id+' · '+t.name+' — '+t.detail;sync();
 }
@@ -113,13 +117,14 @@ function updateAnnotations(){
  let h=host.clientHeight;
  host.classList.toggle('compact-annotations',compact);
  annotationSvg.hidden=!show;
- const visible=[];
+ const visible=[],q=searchQuery.toLowerCase();
+ const match=t=>!q||t.name.toLowerCase().includes(q)||t.id.includes(q)||t.detail.toLowerCase().includes(q);
  tags.forEach(t=>{
   const pt=t.point().project(camera),visibleMode=t.mode==='always'||(cut?t.mode==='inside':t.mode==='outer');
-  const shown=show&&visibleMode&&(group==='view'||t.group===group)&&pt.z>=-1&&pt.z<=1;
+  const shown=show&&visibleMode&&(group==='view'||t.group===group)&&match(t)&&pt.z>=-1&&pt.z<=1;
   t.e.hidden=!shown;t.line.style.display=shown?'':'none';t.dot.style.display=shown?'':'none';
   t.e.classList.toggle('selected',t.id===selectedPart);t.entry.classList.toggle('selected',t.id===selectedPart);t.e.setAttribute('aria-pressed',String(t.id===selectedPart));t.entry.setAttribute('aria-pressed',String(t.id===selectedPart));
-  t.entry.hidden=group!=='view'&&t.group!==group;
+  t.entry.hidden=(group!=='view'&&t.group!==group)||!match(t);
   if(shown)visible.push({...t,px:(pt.x/2+.5)*w,projectedY:pt.y});
  });
  host.classList.toggle('dense-annotations',compact&&visible.length>20);

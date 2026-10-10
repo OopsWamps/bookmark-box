@@ -273,10 +273,13 @@ function buildSafetyDevices(){
   const pawl=new THREE.Group();pawl.position.set(sign*119.2,38,2);liftGroup.add(pawl);
   box(pawl,2.4,16,1.6,1.2,-8,0,silver);
   pawl.userData.pawlSign=sign;pawlPivots.push(pawl);
-  // Service prop hinged at the inner wall; stowed vertical, swung out flat
-  // beneath the carriage beams when the maintenance cover is opened.
-  const prop=new THREE.Group();prop.position.set(sign*146,27,-22);scene.add(prop);
-  box(prop,40,2,16,-sign*20,0,0,silver);
+  // Service prop hinged on the inner face of the side spine (X135), stowed
+  // flat against it and swung out beneath the carriage beams. The arm stays
+  // inboard of both the spine and the skirt shells, so the old wall/skirt
+  // crossings (RSK-6) are gone.
+  box(scene,2,8,16,sign*134,26,-22,silver);
+  const prop=new THREE.Group();prop.position.set(sign*135,27,-22);scene.add(prop);
+  box(prop,30,2,16,-sign*15,0,0,silver);
   prop.rotation.y=sign*Math.PI/2;serviceProps.push(prop);
  }
  // Fail-safe brake disc between the M1 output pulley and the motor body,
