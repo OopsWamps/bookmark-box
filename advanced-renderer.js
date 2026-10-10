@@ -1,5 +1,5 @@
 // Mechanical coordinates are X right, Y rear, Z up. Three uses (X,Z,-Y).
-let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[];
+let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[],obstacleDemo;
 const mechanicalToThree=p=>new THREE.Vector3(p.x,p.z,-p.y);
 // Local edge treatment only. The chamfer removes material inside the original
 // box envelope; central flat mating faces and all original locations are kept.
@@ -282,8 +282,13 @@ function buildSafetyDevices(){
  // Fail-safe brake disc between the M1 output pulley and the motor body,
  // on fixed brackets clear of the belt run.
  cylinder(scene,6,5,0,16,64,dark,'x').name='brake-disc';
- ring(scene,6.4,8.2,6,0,16,64,silver,'x');
+ ring(scene,6.4,8.2,6,0,16,64,silver,'x').name='brake-armature';
  for(const x of [-8,8])box(scene,2,7.5,4,x,9.75,50,silver);
+ // Interlock demo prop: a translucent marker hovering over the take area.
+ // It slides in only while the obstacle interlock is simulated and carries no
+ // mechanical meaning — the real machine stops on its sensors instead.
+ obstacleDemo=new THREE.Group();scene.add(obstacleDemo);obstacleDemo.visible=false;
+ box(obstacleDemo,56,22,28,0,205,15,material(0x8a2f2f,{transparent:true,opacity:.5})).name='obstacle-block';
 }
 function bellowsGeometry(q){
  const perimeter=[],r=4,hw=142,hd=100;

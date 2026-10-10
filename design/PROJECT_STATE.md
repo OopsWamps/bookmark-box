@@ -5,7 +5,7 @@
 | 项 | 值 |
 | --- | --- |
 | 当前设计版本 | REV2（D5-2 安全构件 + D2-A 槽形 D8 优化；基线 REV0 = git `2bbe9e2`，工作分支 `improvement/rev1`） |
-| 当前阶段 | G2 工程展开（D5-2 概念几何完成，选型受 ASM-1 阻塞） |
+| 当前阶段 | G3 详细设计准备（缺口清单与试验计划见 design/G3_READINESS.md） |
 | 改进对象 | `书签收纳盒-凸轮倾斜高级版.html`（构建产物） |
 | 权威源文件 | `advanced-kinematics.js`、`advanced-renderer.js`、`advanced-annotations.js`、`advanced-engineering-details.html`、`ui-template.html`、`scene.js`、`kinematics.js`、`annotations.js`、`lowbox-renderer.js`、`build-advanced.cjs` |
 | 构建方式 | 改源文件后 `node build-advanced.cjs` 重建 HTML，不手改交付文件 |

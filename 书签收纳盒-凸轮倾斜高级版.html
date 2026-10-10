@@ -23,6 +23,7 @@
 
 .compact-annotations .part-callout{height:24px;padding:2px;justify-content:center}.compact-annotations .part-callout .part-name{display:none}.compact-annotations .part-callout.selected .part-number{margin:0;padding:0 2px}
 #sceneHost.dense-annotations{min-height:460px}
+.safety-status.alerting{animation:alertPulse 1.1s ease-in-out infinite}@keyframes alertPulse{50%{opacity:.35}}
 </style>
 <link rel="icon" href="data:,">
 </head>
@@ -352,7 +353,7 @@ if(typeof module!=='undefined')module.exports=Mechanism;
 'use strict';
 const $=id=>document.getElementById(id), {D,pose}=Mechanism;
 const host=$('sceneHost');
-let p=0,target=0,moving=false,queue=[],hold=0,last=0,cut=false,dirty=true,obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false;
+let p=0,target=0,moving=false,queue=[],hold=0,last=0,cut=false,dirty=true,obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false,obstacleAnim=0,brakeArmature=null;
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 let scene,renderer,camera,liftGroup,frontBrand,pullBar,filmMesh,filmEdges,filmRoll,reelGroup,cassetteShell;
 const shellParts=[],screws=[],tags=[];
@@ -408,6 +409,40 @@ function makeCards(){
   });
 }
 let selectedPart=null,annotationSvg;
+// Focus/dim: selecting a callout keeps its own meshes readable and blurs the
+// rest. Mesh membership is decided geometrically from the callout's anchor
+// point (bbox containment, nearest-cluster fallback) because the part specs
+// carry points, not mesh references.
+const dimCache=new Map(),selCache=new Map();
+function dimMat(base){
+ if(!dimCache.has(base)){const m=base.clone();m.transparent=true;m.opacity=Math.min(base.opacity??1,.13);m.depthWrite=false;dimCache.set(base,m);}
+ return dimCache.get(base);
+}
+function selMat(base){
+ if(!selCache.has(base)){const m=base.clone();if(m.emissive)m.emissive=new THREE.Color(0x232323);selCache.set(base,m);}
+ return selCache.get(base);
+}
+function focusMeshes(t){
+ const p=t.point(),keep=new Set(),near=[];
+ scene.updateMatrixWorld(true);
+ scene.traverse(o=>{
+  if(!o.isMesh||!o.visible&&false)return;
+  const box=new THREE.Box3().setFromObject(o);
+  const dist=box.distanceToPoint(p);
+  if(box.containsPoint(p))keep.add(o);else if(dist<15)near.push([dist,o]);
+ });
+ if(!keep.size)near.sort((a,b)=>a[0]-b[0]).slice(0,6).forEach(e=>keep.add(e[1]));
+ return keep;
+}
+function applyFocus(t){
+ const keep=t?focusMeshes(t):null;
+ scene.traverse(o=>{
+  if(!o.isMesh)return;
+  if(!o.userData._origMat)o.userData._origMat=o.material;
+  const base=o.userData._origMat;
+  o.material=!t?base:keep.has(o)?selMat(base):dimMat(base);
+ });
+}
 function partPoint(x,y,z,motion='fixed'){
  return ()=>{
   const q=pose(p);
@@ -470,11 +505,16 @@ function buildPartAnnotations(){
  $('partCount').textContent=tags.length+' 个部件';
  $('annotationGroup').addEventListener('change',()=>{
   const group=$('annotationGroup').value;if(group!=='view'){cut=group!=='guard';$('cutaway').checked=cut;}
-  $('labels').checked=true;selectedPart=null;$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';sync();
+  $('labels').checked=true;selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';sync();
  });
 }
 function selectPart(t){
- selectedPart=t.id;$('labels').checked=true;$('annotationGroup').value='view';
+ if(selectedPart===t.id){ // second tap on the same callout clears the focus
+  selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';
+  $('labels').checked=true;$('annotationGroup').value='view';sync();return;
+ }
+ selectedPart=t.id;applyFocus(t);
+ $('labels').checked=true;$('annotationGroup').value='view';
  if(t.mode!=='always'){cut=t.mode==='inside';$('cutaway').checked=cut;}
  $('partInfo').textContent=t.id+' · '+t.name+' — '+t.detail;sync();
 }
@@ -597,7 +637,7 @@ function buildLowBox(){
  buildAdvancedParts();
 }
 // Mechanical coordinates are X right, Y rear, Z up. Three uses (X,Z,-Y).
-let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[];
+let tiltGroup,tiltPivot,bellowsMesh,hingeCable,advanceFixed=[],advanceMoving=[],camRollers=[],reelShell,pawlPivots=[],serviceProps=[],obstacleDemo;
 const mechanicalToThree=p=>new THREE.Vector3(p.x,p.z,-p.y);
 // Local edge treatment only. The chamfer removes material inside the original
 // box envelope; central flat mating faces and all original locations are kept.
@@ -880,8 +920,13 @@ function buildSafetyDevices(){
  // Fail-safe brake disc between the M1 output pulley and the motor body,
  // on fixed brackets clear of the belt run.
  cylinder(scene,6,5,0,16,64,dark,'x').name='brake-disc';
- ring(scene,6.4,8.2,6,0,16,64,silver,'x');
+ ring(scene,6.4,8.2,6,0,16,64,silver,'x').name='brake-armature';
  for(const x of [-8,8])box(scene,2,7.5,4,x,9.75,50,silver);
+ // Interlock demo prop: a translucent marker hovering over the take area.
+ // It slides in only while the obstacle interlock is simulated and carries no
+ // mechanical meaning — the real machine stops on its sensors instead.
+ obstacleDemo=new THREE.Group();scene.add(obstacleDemo);obstacleDemo.visible=false;
+ box(obstacleDemo,56,22,28,0,205,15,material(0x8a2f2f,{transparent:true,opacity:.5})).name='obstacle-block';
 }
 function bellowsGeometry(q){
  const perimeter=[],r=4,hw=142,hd=100;
@@ -953,7 +998,7 @@ function init3D(){
   const key=new THREE.DirectionalLight(0xffffff,3.3);key.position.set(-400,700,450);key.castShadow=true;key.shadow.mapSize.set(2048,2048);Object.assign(key.shadow.camera,{left:-430,right:430,top:600,bottom:-350,near:1,far:1600});key.shadow.normalBias=1;key.shadow.bias=-.0002;key.shadow.radius=4;scene.add(key);
   const fill=new THREE.DirectionalLight(0xffffff,2);fill.position.set(450,200,-400);scene.add(fill);
   dark=material(0x181818,{roughness:.74,metalness:.24});white=material(0xf2f2f0,{roughness:.74});silver=material(0xb4b4b4,{metalness:.76,roughness:.31});rubber=material(0x303030,{roughness:.95});
-  glass=new THREE.MeshPhysicalMaterial({color:0xffffff,roughness:.14,metalness:0,transparent:true,opacity:.38,side:THREE.DoubleSide,depthWrite:false});
+  glass=new THREE.MeshPhysicalMaterial({color:0xb4b4b4,roughness:.30,metalness:0,transparent:true,opacity:.60,side:THREE.DoubleSide,depthWrite:false});
   const floor=new THREE.Mesh(new THREE.PlaneGeometry(3000,3000),material(0xf5f5f3,{metalness:0,roughness:1}));floor.rotation.x=-Math.PI/2;floor.position.y=-1;floor.receiveShadow=true;scene.add(floor);
   buildLowBox();
   let drag=null;
@@ -995,6 +1040,9 @@ function tick(t){
       else p+=Math.sign(delta)*step;
     }
   }
+  if(obstacleDemo){obstacleAnim+=((obstacle?1:0)-obstacleAnim)*Math.min(1,dt*5);obstacleDemo.visible=obstacleAnim>.01;obstacleDemo.position.y=205+90*(1-obstacleAnim)+Math.sin(t/300)*2.5*obstacleAnim;}
+  if(!brakeArmature)brakeArmature=scene.getObjectByName('brake-armature');
+  if(brakeArmature)brakeArmature.position.y+=((powerLost?14.6:16)-brakeArmature.position.y)*Math.min(1,dt*6);
   if(wasMoving||dirty){sync();dirty=false;}requestAnimationFrame(tick);
 }
 document.querySelectorAll('[data-state]').forEach(b=>b.addEventListener('click',()=>go([0,.36,1][+b.dataset.state])));

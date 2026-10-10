@@ -11,7 +11,7 @@ html=html.replace(/<title>[^<]*<\/title>/,'<title>拾页 · 凸轮倾斜高级�
  .replace('选择一个状态，观察升起与卷收。','选择一个状态，观察抬升、倾斜与卷收。')
  .replace('<dt>卷筒直径</dt><dd><span id="angleValue">28</span><small>mm</small>','<dt>展示倾角</dt><dd><span id="angleValue">0</span><small>°</small>')
  .replace('剖面用于检查支承、运动与裙罩搭接；几何检查不等于安全认证。','主槽滚轮把升程转换为倾角；整组卷盖随托盘倾斜。剖视与数值检查用于结构评审。');
-insert('</style>',css+read('annotations.css')+'#sceneHost.dense-annotations{min-height:460px}\n'+'</style>');
+insert('</style>',css+read('annotations.css')+'#sceneHost.dense-annotations{min-height:460px}\n.safety-status.alerting{animation:alertPulse 1.1s ease-in-out infinite}@keyframes alertPulse{50%{opacity:.35}}\n'+'</style>');
 // Lift-safety demo (D5-2): a third interlock button drops the pawls and blocks
 // every motion source until it is released, mirroring the obstacle/service gates.
 html=html.replace('<button type="button" id="obstacleBtn" aria-pressed="false">模拟遮挡</button>',
@@ -35,9 +35,9 @@ let scene=read('scene.js')
  .replace('x,99.5,12,material','x+1,95.5,13,material')
  .replace('face.position.set(x,101.1,12)','face.position.set(x+1,97.05,13)')
  .replace('const radius=850,focus=76','const radius=850,focus=106')
- .replace('roughness:.10,metalness:0,transparent:true,opacity:.17','roughness:.14,metalness:0,transparent:true,opacity:.38')
+ .replace('color:0xffffff,roughness:.10,metalness:0,transparent:true,opacity:.17','color:0xb4b4b4,roughness:.30,metalness:0,transparent:true,opacity:.60')
  .replace("q.rollDiameter.toFixed(1)","q.tiltDegrees.toFixed(1)")
- .replace('obstacle=false,serviceOpen=false,restartRequired=false;','obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false;')
+ .replace('obstacle=false,serviceOpen=false,restartRequired=false;','obstacle=false,serviceOpen=false,restartRequired=false,powerLost=false,obstacleAnim=0,brakeArmature=null;')
  .replaceAll('obstacle||serviceOpen','obstacle||serviceOpen||powerLost')
  .replace("serviceOpen?'维护盖未锁 · 驱动禁用':","powerLost?'失电锁定 · 棘爪落入棘条，运动保持禁止':serviceOpen?'维护盖未锁 · 驱动禁用':")
  .replace("$('obstacleBtn').textContent=obstacle?'解除遮挡':'模拟遮挡';$('obstacleBtn').setAttribute('aria-pressed',String(obstacle));",
@@ -45,6 +45,15 @@ let scene=read('scene.js')
  .replace("obstacle,serviceOpen,restartRequired};","obstacle,serviceOpen,restartRequired,powerLost};")
  .replace("$('serviceOpen').addEventListener('change',e=>{serviceOpen=e.target.checked;stopOnInterlock();});",
  "$('serviceOpen').addEventListener('change',e=>{serviceOpen=e.target.checked;stopOnInterlock();});\n$('powerLossBtn').addEventListener('click',()=>{powerLost=!powerLost;stopOnInterlock();});")
+ // Interlock scene hints: the obstacle marker slides over the take area, the
+ // brake armature creeps onto its disc on power loss, status line pulses.
+ .replace('  if(wasMoving||dirty){sync();dirty=false;}requestAnimationFrame(tick);',
+`  if(obstacleDemo){obstacleAnim+=((obstacle?1:0)-obstacleAnim)*Math.min(1,dt*5);obstacleDemo.visible=obstacleAnim>.01;obstacleDemo.position.y=205+90*(1-obstacleAnim)+Math.sin(t/300)*2.5*obstacleAnim;}
+  if(!brakeArmature)brakeArmature=scene.getObjectByName('brake-armature');
+  if(brakeArmature)brakeArmature.position.y+=((powerLost?14.6:16)-brakeArmature.position.y)*Math.min(1,dt*6);
+  if(wasMoving||dirty){sync();dirty=false;}requestAnimationFrame(tick);`)
+ .replace("$('safetyStatus').textContent=powerLost?",
+ "$('safetyStatus').classList.toggle('alerting',obstacle||serviceOpen||powerLost);$('safetyStatus').textContent=powerLost?")
  .replace('/* ANNOTATION_SYSTEM */',()=>read('advanced-annotations.js'))
  .replace('/* MECHANISM_RENDERER */',()=>renderer);
 insert('<!-- SCENE_SCRIPT -->','<script>\n'+read('advanced-kinematics.js')+'\n'+scene+'\n</script>');

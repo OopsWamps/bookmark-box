@@ -1,4 +1,38 @@
 let selectedPart=null,annotationSvg;
+// Focus/dim: selecting a callout keeps its own meshes readable and blurs the
+// rest. Mesh membership is decided geometrically from the callout's anchor
+// point (bbox containment, nearest-cluster fallback) because the part specs
+// carry points, not mesh references.
+const dimCache=new Map(),selCache=new Map();
+function dimMat(base){
+ if(!dimCache.has(base)){const m=base.clone();m.transparent=true;m.opacity=Math.min(base.opacity??1,.13);m.depthWrite=false;dimCache.set(base,m);}
+ return dimCache.get(base);
+}
+function selMat(base){
+ if(!selCache.has(base)){const m=base.clone();if(m.emissive)m.emissive=new THREE.Color(0x232323);selCache.set(base,m);}
+ return selCache.get(base);
+}
+function focusMeshes(t){
+ const p=t.point(),keep=new Set(),near=[];
+ scene.updateMatrixWorld(true);
+ scene.traverse(o=>{
+  if(!o.isMesh||!o.visible&&false)return;
+  const box=new THREE.Box3().setFromObject(o);
+  const dist=box.distanceToPoint(p);
+  if(box.containsPoint(p))keep.add(o);else if(dist<15)near.push([dist,o]);
+ });
+ if(!keep.size)near.sort((a,b)=>a[0]-b[0]).slice(0,6).forEach(e=>keep.add(e[1]));
+ return keep;
+}
+function applyFocus(t){
+ const keep=t?focusMeshes(t):null;
+ scene.traverse(o=>{
+  if(!o.isMesh)return;
+  if(!o.userData._origMat)o.userData._origMat=o.material;
+  const base=o.userData._origMat;
+  o.material=!t?base:keep.has(o)?selMat(base):dimMat(base);
+ });
+}
 function partPoint(x,y,z,motion='fixed'){
  return ()=>{
   const q=pose(p);
@@ -61,11 +95,16 @@ function buildPartAnnotations(){
  $('partCount').textContent=tags.length+' 个部件';
  $('annotationGroup').addEventListener('change',()=>{
   const group=$('annotationGroup').value;if(group!=='view'){cut=group!=='guard';$('cutaway').checked=cut;}
-  $('labels').checked=true;selectedPart=null;$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';sync();
+  $('labels').checked=true;selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';sync();
  });
 }
 function selectPart(t){
- selectedPart=t.id;$('labels').checked=true;$('annotationGroup').value='view';
+ if(selectedPart===t.id){ // second tap on the same callout clears the focus
+  selectedPart=null;applyFocus(null);$('partInfo').textContent='点选模型编号或部件目录，查看名称与作用。';
+  $('labels').checked=true;$('annotationGroup').value='view';sync();return;
+ }
+ selectedPart=t.id;applyFocus(t);
+ $('labels').checked=true;$('annotationGroup').value='view';
  if(t.mode!=='always'){cut=t.mode==='inside';$('cutaway').checked=cut;}
  $('partInfo').textContent=t.id+' · '+t.name+' — '+t.detail;sync();
 }
