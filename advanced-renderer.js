@@ -17,7 +17,7 @@ function supportRootFillet(parent,x,z,yy,sign,depth,r=2){
  // both faces continuously rather than decorating the edge with a line.
  const sh=new THREE.Shape();sh.moveTo(0,0);sh.lineTo(r,0);sh.absarc(r,r,r,-Math.PI/2,-Math.PI,true);sh.lineTo(0,0);sh.closePath();
  const g=new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:false,curveSegments:16}),m=new THREE.Mesh(g,silver);
- m.position.set(x,z,yy-depth/2);m.scale.x=sign;m.name='support-root-fillet';m.userData.edgeTreatment={type:'root-fillet',radius:r};parent.add(m);m.castShadow=true;return tagMesh(m);
+ m.position.set(x,z,yy-depth/2);m.scale.x=sign;m.name='support-root-fillet';m.userData.edgeTreatment={type:'root-fillet',radius:r};parent.add(m);m.castShadow=true;return m;
 }
 function finishFoundationEdges(){
  // Foundation parts come from the unchanged shared renderer. Select only its
@@ -51,13 +51,13 @@ function formedGuardRing(parent,w,d,iw,id,bottom,top,name,ramped=false){
  const quad=(a,b,c,d)=>idx.push(a,b,c,b,d,c);
  for(let i=0;i<n;i++){const k=(i+1)%n;quad(i,k,n+i,n+k);quad(2*n+k,2*n+i,3*n+k,3*n+i);quad(n+i,n+k,3*n+i,3*n+k);quad(k,i,2*n+k,2*n+i);}
  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
- const m=new THREE.Mesh(g,white);m.name=name;parent.add(m);m.castShadow=true;return tagMesh(m);
+ const m=new THREE.Mesh(g,white);m.name=name;parent.add(m);m.castShadow=true;return m;
 }
 function rearHoodTransition(){
  // The upper formed flange supplies the ramp; this wall continues it to Z91.
  const yz=[{y:105.5,z:84},{y:106.5,z:84},{y:106.5,z:91},{y:105.5,z:91}];
  const sh=new THREE.Shape(yz.map(p=>new THREE.Vector2(p.y,p.z)));sh.closePath();
- const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:291.6,bevelEnabled:false}),white);m.rotation.y=Math.PI/2;m.position.x=-145.8;m.name='rear-hood-ramp';tiltGroup.add(m);return tagMesh(m);
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:291.6,bevelEnabled:false}),white);m.rotation.y=Math.PI/2;m.position.x=-145.8;m.name='rear-hood-ramp';tiltGroup.add(m);return m;
 }
 function upperCornerClosures(){
  // The rounded clamp meets rectangular rigid walls. Fill the four arc-to-corner
@@ -70,7 +70,7 @@ function upperCornerClosures(){
   for(let i=0;i<n-2;i++){idx.push(n-1,i,i+1,2*n-1,n+i+1,n+i);}
   for(let i=0;i<n;i++){const k=(i+1)%n;idx.push(i,n+i,k,k,n+i,n+k);}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
-  const m=new THREE.Mesh(g,white);m.name='rear-corner-closure-'+sx+'-'+sy;tiltGroup.add(m);m.castShadow=true;advanceMoving.push(tagMesh(m));
+  const m=new THREE.Mesh(g,white);m.name='rear-corner-closure-'+sx+'-'+sy;tiltGroup.add(m);m.castShadow=true;advanceMoving.push(m);
  }
 }
 function xPlate(parent,x,t,points,holes,mat){
@@ -87,7 +87,7 @@ function xPlate(parent,x,t,points,holes,mat){
  }else{sh.setFromPoints(points.map(p=>new THREE.Vector2(p.y,p.z)));}
  sh.closePath();
  for(const h of holes){const hp=new THREE.Path();hp.absarc(h.y,h.z,h.r,0,Math.PI*2,true);sh.holes.push(hp);}
- const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:32}),mat);m.rotation.y=Math.PI/2;m.position.x=x-t/2;parent.add(m);m.castShadow=true;return tagMesh(m);
+ const m=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:t,bevelEnabled:false,curveSegments:32}),mat);m.rotation.y=Math.PI/2;m.position.x=x-t/2;parent.add(m);m.castShadow=true;return m;
 }
 function camOutline(points,r){
  const normals=points.map((p,i)=>{const a=points[Math.max(0,i-1)],b=points[Math.min(points.length-1,i+1)],dy=b.y-a.y,dz=b.z-a.z,d=Math.hypot(dy,dz);return {y:dz/d,z:-dy/d};});
@@ -97,7 +97,6 @@ function camOutline(points,r){
  for(let k=1;k<=24;k++){const p=points[0],n=normals[0],a=Math.atan2(n.z,n.y)+Math.PI+Math.PI*k/24;out.push({y:p.y+r*Math.cos(a),z:p.z+r*Math.sin(a)});}return out;
 }
 function camPlate(sign){
- partTag=sign>0?'camMaster':'camBackup';
  const pts=Mechanism.camCenterline(400),half=sign>0?5.15:6.3,outer=camOutline(pts,half+3),inner=camOutline(pts,half).reverse();
  const sh=new THREE.Shape(outer.map(p=>new THREE.Vector2(p.y,p.z)));sh.closePath();const hole=new THREE.Path(inner.map(p=>new THREE.Vector2(p.y,p.z)));hole.closePath();sh.holes.push(hole);
  const plate=new THREE.Mesh(new THREE.ExtrudeGeometry(sh,{depth:4,bevelEnabled:false,curveSegments:32}),silver);plate.rotation.y=Math.PI/2;plate.position.x=sign*132-2;scene.add(plate);plate.castShadow=true;
@@ -127,7 +126,7 @@ function trayPockets(){
  const floorSh=new THREE.Shape(outline.map(p=>new THREE.Vector2(...p)));floorSh.closePath();
  const floor=new THREE.Mesh(new THREE.ExtrudeGeometry(floorSh,{depth:2,bevelEnabled:false}),white);floor.rotation.x=-Math.PI/2;floor.position.y=92;tiltGroup.add(floor);
  for(const x of [-87,-29,29,87]){
-  partTag='softRib';box(tiltGroup,48,2.4,1.2,x+1,95.8,-62.5,rubber);box(tiltGroup,2.1,2.4,140,x-25,95.8,12,rubber);partTag='tray';
+  box(tiltGroup,48,2.4,1.2,x+1,95.8,-62.5,rubber);
   box(tiltGroup,2.1,2.4,140,x-25,95.8,12,rubber);
  }
  // The low end remains continuous; local motor-notch wall gets a captive steel angle.
@@ -135,43 +134,42 @@ function trayPockets(){
  box(tiltGroup,5,1,15,116,86.5,91,silver);
 }
 function buildAdvancedParts(){
- partTag='spine';finishFoundationEdges();
+ finishFoundationEdges();
  camPlate(1);camPlate(-1);
- partTag='carriage';liftGroup=new THREE.Group();scene.add(liftGroup);
+ liftGroup=new THREE.Group();scene.add(liftGroup);
  // Vertical carriage: stems and nut arms remain aligned with the fixed screws/guides.
  for(const sign of [-1,1]){
   chamferBox(liftGroup,6,54,91,sign*114,57,16.5,silver,.5);
   boredBlock(liftGroup,12,10,12,sign*129,30,18,3.6,dark);
-  partTag='sleeve';ring(liftGroup,3,5,10,sign*129,30,-40,dark);partTag='carriage';
-  for(const y of [-18,40]){partTag=y===40?'guideArm':'carriage';chamferBox(liftGroup,12,6,12,sign*119,30,-y,silver,.5);}
+  ring(liftGroup,3,5,10,sign*129,30,-40,dark);
+  for(const y of [-18,40])chamferBox(liftGroup,12,6,12,sign*119,30,-y,silver,.5);
   // The rear arm starts at mechanical Y34, but the vertical stem ends at Y29.
   // This short web overlaps both parts and closes the former 5 mm load-path gap.
-  partTag='guideArm';chamferBox(liftGroup,6,6,9,sign*114,33,-31.5,silver,.3);partTag='carriage';
+  chamferBox(liftGroup,6,6,9,sign*114,33,-31.5,silver,.3);
   // Front bearing arm joins the vertical stem without crossing a bookmark pocket.
   chamferBox(liftGroup,6,4,36,sign*114,82,70,silver);
   chamferBox(liftGroup,6.5,4,8,sign*117.25,82,76,silver);
   chamferBox(liftGroup,3,18,4,sign*120.5,91,76,silver);
-  partTag='trunnion';for(const [cx,t] of [[120.5,3],[128.5,2]]){
+  for(const [cx,t] of [[120.5,3],[128.5,2]]){
    ring(liftGroup,4.05,5,t,sign*cx,100,82,silver,'x');
    ring(liftGroup,2,4,t,sign*cx,100,82,dark,'x');
    chamferBox(liftGroup,t,4,8,sign*cx,102,74,silver);
   }
   chamferBox(liftGroup,11,4,10,sign*124,102,73,silver);
  }
- partTag='movingShell';advanceMoving.push(roundedShell(liftGroup,291.6,213,8,80,.8,3,white));
+ advanceMoving.push(roundedShell(liftGroup,291.6,213,8,80,.8,3,white));
  // Continuous formed flange connects the soft enclosure to the vertical skirt.
  advanceMoving.push(formedGuardRing(liftGroup,291.6,213,284,200,75.3,76,'rear-lower-flange'));
  tiltPivot=new THREE.Group();tiltPivot.position.set(0,100,82);scene.add(tiltPivot);
  tiltGroup=new THREE.Group();tiltGroup.position.set(0,-100,-82);tiltPivot.add(tiltGroup);
- partTag='tray';trayPockets();
+ trayPockets();
  // Continuous U-shaped torsion frame under the pocket floors connects both trunnions.
- partTag='tray';for(const x of [-114,-58,0,58,114])chamferBox(tiltGroup,6,6,162,x,89,12,silver,.5);
+ for(const x of [-114,-58,0,58,114])chamferBox(tiltGroup,6,6,162,x,89,12,silver,.5);
  for(const y of [-82,-6,66])chamferBox(tiltGroup,228,6,6,0,89,-y,silver,.5);
- partTag='crank';
  for(const sign of [-1,1]){
   chamferBox(tiltGroup,12,6,8,sign*122,89,62,silver);
   chamferBox(tiltGroup,3,6,20,sign*125.5,89,72,silver);
-   cylinder(tiltGroup,2,17,sign*126,100,82,silver,'x');
+  cylinder(tiltGroup,2,17,sign*126,100,82,silver,'x');
   const armPts=[];for(let i=0;i<=24;i++){const a=Math.PI*i/24;armPts.push({y:-82+3*Math.cos(a),z:100+3*Math.sin(a)});}for(let i=0;i<=24;i++){const a=Math.PI+Math.PI*i/24;armPts.push({y:-82+3*Math.cos(a),z:35+3*Math.sin(a)});}
   xPlate(tiltGroup,sign*125.5,3,armPts,[{y:-82,z:100,r:2.05},{y:-82,z:35,r:1.55}],silver);
   const wheel=ring(tiltGroup,1.5,5,7,sign*132,35,82,silver,'x');camRollers.push(wheel);
@@ -180,8 +178,7 @@ function buildAdvancedParts(){
   cylinder(tiltGroup,2.6,1.5,sign*136.25,35,82,dark,'x');
  }
  const carriage=liftGroup;liftGroup=tiltGroup;
- partTag='cards';makeCards();
- partTag='tiltBelt';
+ makeCards();
  for(const x of [-142,142]){
   const sign=Math.sign(x);verticalBelt(x);
   for(const y of [-92,92]){
@@ -191,35 +188,33 @@ function buildAdvancedParts(){
   }
  }
  cylinder(tiltGroup,1.5,288,0,103,92,silver,'x');
- partTag='m2';cylinder(tiltGroup,6,10,121,93,92,dark,'x');cylinder(tiltGroup,1.5,14,133,93,92,silver,'x');box(tiltGroup,2,14,14,115,93,92,silver);
- partTag='gears';driveGears.push(spurGear(93,0),spurGear(103,Math.PI/20));
- partTag='pullBarBeam';pullBar=new THREE.Group();pullBar.position.z=92;tiltGroup.add(pullBar);
+ cylinder(tiltGroup,6,10,121,93,92,dark,'x');cylinder(tiltGroup,1.5,14,133,93,92,silver,'x');box(tiltGroup,2,14,14,115,93,92,silver);
+ driveGears.push(spurGear(93,0),spurGear(103,Math.PI/20));
+ pullBar=new THREE.Group();pullBar.position.z=92;tiltGroup.add(pullBar);
  box(pullBar,284,1.4,3,0,107.2,0,dark);box(pullBar,254,.2,2,0,106.2,0,silver);box(pullBar,250,1.2,1.4,0,107.1,2,rubber);
  for(const x of [-142,142])box(pullBar,3,1,3,x,106.5,0,silver);
- partTag='guideRoller';cylinder(tiltGroup,11.85,254,0,94,-92,material(0x575757,{roughness:.85}),'x');cylinder(tiltGroup,3,272,0,94,-92,silver,'x');
- partTag='spool';cylinder(tiltGroup,3,278,-3,66,-72,silver,'x');
- partTag='rearPlate';
+ cylinder(tiltGroup,11.85,254,0,94,-92,material(0x575757,{roughness:.85}),'x');cylinder(tiltGroup,3,272,0,94,-92,silver,'x');
+ cylinder(tiltGroup,3,278,-3,66,-72,silver,'x');
  for(const x of [-132,132]){
   const rearPlate=xPlate(tiltGroup,x,4,[{y:54,z:49,r:1},{y:82,z:49,r:1},{y:82,z:78,r:2},{y:100,z:88,r:1},{y:100,z:107,r:1},{y:78,z:107,r:1},{y:78,z:88,r:2},{y:54,z:88,r:1}],[{y:72,z:66,r:5.05},{y:92,z:94,r:5.05},{y:92,z:103,r:3.25}],dark);rearPlate.name='rear-bearing-plate';rearPlate.userData.edgeTreatment={type:'profile-fillet',internalRadius:2,externalRadius:1};
   ring(tiltGroup,3,5,6,x,94,-92,silver,'x');ring(tiltGroup,3,5,6,x,66,-72,silver,'x');
   chamferBox(tiltGroup,22,5,12,Math.sign(x)*122,91,-73,silver);
  }
- partTag='spool';reelGroup=new THREE.Group();reelGroup.position.set(0,66,-72);tiltGroup.add(reelGroup);
+ reelGroup=new THREE.Group();reelGroup.position.set(0,66,-72);tiltGroup.add(reelGroup);
  cylinder(reelGroup,14,254,0,0,0,dark,'x');filmRoll=cylinder(reelGroup,1,254,0,0,0,material(0xc3c3c3,{roughness:.4}),'x');
  for(const x of [-128.2,128.2])cylinder(reelGroup,16,2,x,0,0,silver,'x');
- partTag='spring';box(tiltGroup,3,6,6,-134.5,66,-89,silver);
+ box(tiltGroup,3,6,6,-134.5,66,-89,silver);
  springHousing=ring(tiltGroup,15.5,17,7,-138,66,-72,white,'x');
  advanceMoving.push(springHousing);for(const x of [-141.5,-134.5])advanceMoving.push(ring(tiltGroup,3.1,17,.6,x,66,-72,white,'x'));
  const sp=[];for(let i=0;i<220;i++){const a=i/219*Math.PI*8,r=5+i/219*9;sp.push(new THREE.Vector3(-138,66+r*Math.sin(a),-72+r*Math.cos(a)));}
  tiltGroup.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(sp),new THREE.LineBasicMaterial({color:0x777777})));
  box(tiltGroup,5,3,3,-138,66,-56,dark);box(tiltGroup,.8,1.2,2,-138,66,-68,silver);box(tiltGroup,.8,1.2,2,-138,66,-57,silver);
- partTag='spool';cassetteShell=new THREE.Group();tiltGroup.add(cassetteShell);
+ cassetteShell=new THREE.Group();tiltGroup.add(cassetteShell);
  const shellPts=[];for(let i=0;i<=120;i++){const a=(9+351*i/120)*Math.PI/180;shellPts.push({y:72+18*Math.cos(a),z:66+18*Math.sin(a)});}
  cassetteShell.add(ribbonMesh(shellPts,258,white));for(const x of [-130,130])ring(cassetteShell,3,18,1,x,66,-72,white,'x');
- partTag='film';const points=Mechanism.coverPath(pose(0));filmMesh=ribbonMesh(points,254,glass);filmMesh.renderOrder=3;filmMesh.castShadow=false;tiltGroup.add(filmMesh);
+ const points=Mechanism.coverPath(pose(0));filmMesh=ribbonMesh(points,254,glass);filmMesh.renderOrder=3;filmMesh.castShadow=false;tiltGroup.add(filmMesh);
  filmEdges=[];for(const x of [-127,127]){const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points.map(v=>new THREE.Vector3(x,v.z,-v.y))),new THREE.LineBasicMaterial({color:0x777777,transparent:true,opacity:.65}));tiltGroup.add(line);filmEdges.push(line);}
  // Rigid cover guards rotate with the tray; their lower edges clear the skirt.
- partTag='hoodSide';
  for(const sign of [-1,1]){
   advanceMoving.push(box(tiltGroup,17.3,1,202,sign*136.15,109.5,0,white));
   advanceMoving.push(box(tiltGroup,1,19,213,sign*145.3,100.5,0,white));
@@ -229,13 +224,13 @@ function buildAdvancedParts(){
   advanceMoving.push(box(tiltGroup,5.5,.6,176,sign*125.5,108.6,0,rubber));
   advanceMoving.push(box(tiltGroup,.5,1.5,166,sign*123,105.25,5,rubber));
  }
- partTag='hoodRear';advanceMoving.push(box(tiltGroup,291.6,1,18,0,109.5,97.5,white));advanceMoving.push(box(tiltGroup,291.6,19,1,0,100.5,106,white));
+ advanceMoving.push(box(tiltGroup,291.6,1,18,0,109.5,97.5,white));advanceMoving.push(box(tiltGroup,291.6,19,1,0,100.5,106,white));
  advanceMoving.push(box(tiltGroup,230,13.5,1,0,97.75,89,white));advanceMoving.push(box(tiltGroup,13,1,20,121.5,109.5,92,white));advanceMoving.push(box(tiltGroup,1,12.5,20,114.5,98.25,92,white));
  advanceMoving.push(box(tiltGroup,291.6,1,28,0,109.5,-93,white));advanceMoving.push(box(tiltGroup,291.6,19,1,0,100.5,-106.5,white));
  advanceMoving.push(box(tiltGroup,258,13.5,1,0,97.75,-78.5,white));advanceMoving.push(box(tiltGroup,258,1.5,1,0,109.25,-78.5,white));advanceMoving.push(box(tiltGroup,255,1,4,0,108.5,-77.5,rubber));
  box(tiltGroup,244,3,5,0,93.5,-76.5,white);
  advanceMoving.push(rearHoodTransition());
- partTag='bellows';advanceMoving.push(formedGuardRing(tiltGroup,291.6,213,284,200,91,91.7,'rear-upper-flange',true));
+ advanceMoving.push(formedGuardRing(tiltGroup,291.6,213,284,200,91,91.7,'rear-upper-flange',true));
  advanceMoving.push(formedGuardRing(tiltGroup,286.4,201.4,284,200,91,94,'rear-upper-clamp',true));
  upperCornerClosures();
  liftGroup=carriage;
@@ -243,14 +238,13 @@ function buildAdvancedParts(){
  const bellowsMat=material(0xa8a8a5,{roughness:1,side:THREE.DoubleSide});
  bellowsMesh=new THREE.Mesh(bellowsGeometry(pose(0)),bellowsMat);scene.add(bellowsMesh);
  // Original constant-length lift U-loop and an independent hinge bend segment.
- partTag='cableLift';box(scene,5,3,37,92,80,86.5,silver);box(scene,5,74,3,92,43,103,silver);
- tagMesh(new THREE.Mesh(new THREE.TubeGeometry(cableCurve(0),48,1.1,8,false),rubber));{const cable=scene.children.at(-1);cable.name='harness';}
- const fixed=[new THREE.Vector3(25,12,86),new THREE.Vector3(96,18,99),new THREE.Vector3(96,18,102),new THREE.Vector3(96,80,102),new THREE.Vector3(96,80,68)];scene.add(tagMesh(new THREE.Mesh(new THREE.TubeGeometry(polylineCurve(fixed),32,1.1,8,false),rubber)));
+ box(scene,5,3,37,92,80,86.5,silver);box(scene,5,74,3,92,43,103,silver);
+ const cable=new THREE.Mesh(new THREE.TubeGeometry(cableCurve(0),48,1.1,8,false),rubber);cable.name='harness';scene.add(cable);
+ const fixed=[new THREE.Vector3(25,12,86),new THREE.Vector3(96,18,99),new THREE.Vector3(96,18,102),new THREE.Vector3(96,80,102),new THREE.Vector3(96,80,68)];scene.add(new THREE.Mesh(new THREE.TubeGeometry(polylineCurve(fixed),32,1.1,8,false),rubber));
  box(scene,4,4,5,96,80,68,rubber);
  box(liftGroup,3,4,5,110.5,82,68,silver);box(liftGroup,4,4,5,108,82,68,rubber);
  box(tiltGroup,3,3,5,110.5,89,68,silver);box(tiltGroup,4,3,5,108,89,68,rubber);
- hingeCable=tagMesh(new THREE.Mesh(new THREE.TubeGeometry(hingeCableCurve(pose(0)),32,1.1,8,false),rubber));scene.add(hingeCable);
- partTag=null;
+ hingeCable=new THREE.Mesh(new THREE.TubeGeometry(hingeCableCurve(pose(0)),32,1.1,8,false),rubber);scene.add(hingeCable);
 }
 // D5-2 lift safety train, approved as combination 1 (DEC-002): energised brake
 // for holding, sprung pawls on fixed racks for run-away arrest independent of
@@ -258,7 +252,6 @@ function buildAdvancedParts(){
 // profiles, solenoid and brake sizing, prop stiffness and impact behaviour
 // stay UNVERIFIED until mass and duty data exist.
 function buildSafetyDevices(){
- partTag='rack';
  for(const sign of [-1,1]){
   // Fixed rack beside each lead screw: X122.5…125.0, Y-10…6, Z6…83. Teeth stop
   // at Z83 so nothing fixed enters the stored tray envelope (floor Z86) west of
@@ -270,7 +263,7 @@ function buildSafetyDevices(){
   screwHead(scene,sign*123.75,7,8);screwHead(scene,sign*123.75,7,-4);
   box(scene,13.8,7,16,sign*132.1,91.5,2,silver);
   screwHead(scene,sign*137,95,4);
-  partTag='pawl';// Carriage pawl: a fixed bracket carries the pivot outboard of the tooth
+  // Carriage pawl: a fixed bracket carries the pivot outboard of the tooth
   // tips (bracket stays west of X120.2 for the whole stroke), the hooked claw
   // hangs from it and drops onto the tooth upper faces on power loss. The
   // holding solenoid is a placeholder mounted on the bracket face.
@@ -280,7 +273,7 @@ function buildSafetyDevices(){
   const pawl=new THREE.Group();pawl.position.set(sign*119.2,38,2);liftGroup.add(pawl);
   box(pawl,2.4,16,1.6,1.2,-8,0,silver);
   pawl.userData.pawlSign=sign;pawlPivots.push(pawl);
-  partTag='prop';// Service prop hinged on the inner face of the side spine (X135), stowed
+  // Service prop hinged on the inner face of the side spine (X135), stowed
   // flat against it and swung out beneath the carriage beams. The arm stays
   // inboard of both the spine and the skirt shells, so the old wall/skirt
   // crossings (RSK-6) are gone.
@@ -289,7 +282,7 @@ function buildSafetyDevices(){
   box(prop,30,2,16,-sign*15,0,0,silver);
   prop.rotation.y=sign*Math.PI/2;serviceProps.push(prop);
  }
-  partTag='brake';// Fail-safe brake disc between the M1 output pulley and the motor body,
+ // Fail-safe brake disc between the M1 output pulley and the motor body,
  // on fixed brackets clear of the belt run.
  cylinder(scene,6,5,0,16,64,dark,'x').name='brake-disc';
  ring(scene,6.4,8.2,6,0,16,64,silver,'x').name='brake-armature';

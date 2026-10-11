@@ -5,7 +5,7 @@ const THREE=require('./assets/three.min.js'),M=require('./advanced-kinematics.js
 const base=fs.readFileSync('lowbox-renderer.js','utf8'),source=fs.readFileSync('advanced-renderer.js','utf8');
 const helpers=base.slice(0,base.indexOf('function buildLowBox(){'))+base.slice(base.indexOf('function xBearingPlate'),base.indexOf('function updateLowBox'));
 const mat=new THREE.MeshBasicMaterial(),parts=[];
-const ctx={THREE,Mechanism:M,D:M.D,pose:M.pose,scene:new THREE.Group(),window:{},silver:mat,dark:mat,white:mat,rubber:mat,glass:mat,screws:[],shellParts:[],partTag:null,tagMesh:m=>m,material:()=>mat,makeCards:()=>{}};
+const ctx={THREE,Mechanism:M,D:M.D,pose:M.pose,scene:new THREE.Group(),window:{},silver:mat,dark:mat,white:mat,rubber:mat,glass:mat,screws:[],shellParts:[],material:()=>mat,makeCards:()=>{}};
 ctx.box=(p,w,h,d,x,z,yy)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);o.position.set(x,z,yy);o.userData.check={kind:'box',parent:p,x,y:-yy,z,w,h,d};p.add(o);parts.push(o);return o;};
 ctx.cylinder=(p,r,h,x,z,yy,m,axis='y')=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,64),mat);o.position.set(x,z,yy);if(axis==='x')o.rotation.z=Math.PI/2;o.userData.check={kind:'cylinder',parent:p,x,y:-yy,z,r,h,axis};p.add(o);parts.push(o);return o;};
 vm.createContext(ctx);vm.runInContext(helpers+source+`

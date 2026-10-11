@@ -13,7 +13,6 @@ const ctx = {
   THREE, Mechanism: M, pose: M.pose, scene: new THREE.Group(), window: {},
   silver: mat, dark: mat, white: mat, rubber: mat, glass: mat,
   drivePulleys: [], driveGears: [], screws: [], shellParts: [], fixedGuards: [],
-  partTag: null, tagMesh: m => m,
   material: () => mat, makeCards: () => {}, screwHead: () => {},
   verticalBelt: () => {}, xBearingPlate: () => {},
   spurGear: () => new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), mat),
