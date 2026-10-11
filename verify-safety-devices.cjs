@@ -145,7 +145,7 @@ const low = fs.readFileSync('lowbox-renderer.js', 'utf8');
 const sceneSrc = fs.readFileSync('scene.js', 'utf8');
 // box/cylinder/material live in scene.js, ring/…/screwHead in lowbox-renderer.js;
 // both are closure partners of advanced-renderer.js inside the built page.
-const sceneHelpers = sceneSrc.slice(sceneSrc.indexOf('function material'), sceneSrc.indexOf('function flatTexture'));
+const sceneHelpers = sceneSrc.slice(sceneSrc.indexOf('let partTag'), sceneSrc.indexOf('function flatTexture'));
 const helperSrc = low.slice(0, low.indexOf('function horizontalBelt')); // ring, boredBlock, roundRect, roundedShell, screwHead
 const mat = new THREE.MeshBasicMaterial();
 const ctx = {
