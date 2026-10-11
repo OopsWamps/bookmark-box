@@ -63,3 +63,12 @@
 | CHK-12 重验 | 碰撞扫掠改用与 build-advanced.cjs 完全一致的拼接（基础段+高级段，325 网格） | 发现并修正：此前扫掠漏掉全部基础段构件（外壳/丝杠/导杆/脊板/M1）；完整构建下新增 2 对设计接触（导杆-滑套），已入白名单；未知接触 0 | PASS | `node verify-global-clearance.cjs` |
 | CHK-13 | 部件归属打标覆盖 | 36 个 partKey 全部有对应 mesh（门禁断言，exit 1 阻断） | PASS | 同上 |
 | 交互修复 | 标注聚焦改为 partTag 精确归属（几何包围盒猜测废弃）；分组筛选点击不再重置；新增部件搜索框 | 用户报告的"高亮很多不对"根因即几何猜测被大件包围盒污染 | 已修复 | HTML 重建，门禁全绿 |
+
+## REV9 + REV10（外飘回归修复 + 电缆走线平滑，2026-10-11）
+
+| CHK | 内容 | 结果 | 状态 | 证据 |
+| --- | --- | --- | --- | --- |
+| REP-1 修复 | 根因：REV7 批量打标丢失 `scene.add(cable)`，'harness' 名经 `children.at(-1)` 错标给立板B，updateLowBox 每帧用电缆管替换其几何。恢复语句后浏览器实测：harness 包围盒中心回设计位、全场无外飘网格、零 console 错误 | 根因修复并实测确认 | 已关闭 | `tests/browser/cable-inspect.cjs` 运行日志 |
+| CHK-12 重验 | 全量拼接扫掠（基础段+高级段）326 网格、31 姿态 | 全部接触匹配白名单，未知接触 0 | PASS | `node verify-global-clearance.cjs` |
+| CHK-13 | 36 partKey 覆盖门禁 | 全部有对应 mesh | PASS | 同上 |
+| CHK-14 | 电缆固定段平滑化（DEC-004）后六门禁全量重跑 | 固定段管中心 (61.6,46.4,86) vs 改前 (60.9,46,85.5)，走线通道不变；verify-kinematics / advanced-kinematics / assembly / rear-bellows / safety-devices / global-clearance 全绿 | PASS | 2026-10-11 运行日志 |

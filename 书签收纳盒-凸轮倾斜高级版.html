@@ -893,7 +893,11 @@ function buildAdvancedParts(){
  // Original constant-length lift U-loop and an independent hinge bend segment.
  partTag='cableLift';box(scene,5,3,37,92,80,86.5,silver);box(scene,5,74,3,92,43,103,silver);
  {const cable=tagMesh(new THREE.Mesh(new THREE.TubeGeometry(cableCurve(0),48,1.1,8,false),rubber));cable.name='harness';scene.add(cable);}
- const fixed=[new THREE.Vector3(25,12,86),new THREE.Vector3(96,18,99),new THREE.Vector3(96,18,102),new THREE.Vector3(96,80,102),new THREE.Vector3(96,80,68)];scene.add(tagMesh(new THREE.Mesh(new THREE.TubeGeometry(polylineCurve(fixed),32,1.1,8,false),rubber)));
+ // Fixed-side run smoothed (REV10): same anchors and channel line as the old
+ // 5-point right-angle polyline, with centripetal Catmull-Rom rounding both
+ // turns. Guide points hug x96 so the cable stays in its cover-channel plates.
+ const fixed=[new THREE.Vector3(25,12,86),new THREE.Vector3(60,15,92),new THREE.Vector3(88,17,98),new THREE.Vector3(96,22,100),new THREE.Vector3(96,55,102),new THREE.Vector3(96,76,102),new THREE.Vector3(96,80,96),new THREE.Vector3(96,80,68)];
+ scene.add(tagMesh(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(fixed,false,'centripetal'),64,1.1,8,false),rubber)));
  box(scene,4,4,5,96,80,68,rubber);
  box(liftGroup,3,4,5,110.5,82,68,silver);box(liftGroup,4,4,5,108,82,68,rubber);
  box(tiltGroup,3,3,5,110.5,89,68,silver);box(tiltGroup,4,3,5,108,89,68,rubber);

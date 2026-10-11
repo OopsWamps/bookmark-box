@@ -1,4 +1,5 @@
 # Local browser sessions, diagnostic screenshots and development backups.
+qa-shots/
 .playwright-cli/
 output/
 versions/
