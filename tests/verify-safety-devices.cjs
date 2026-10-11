@@ -5,7 +5,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const THREE = require('./assets/three.min.js');
+const THREE = require('../assets/three.min.js');
 
 // Mechanical envelopes [x0,x1, y0,y1, z0,z1] in millimetres.
 const FIXED = {
@@ -149,7 +149,7 @@ const sceneHelpers = sceneSrc.slice(sceneSrc.indexOf('let partTag'), sceneSrc.in
 const helperSrc = low.slice(0, low.indexOf('function horizontalBelt')); // ring, boredBlock, roundRect, roundedShell, screwHead
 const mat = new THREE.MeshBasicMaterial();
 const ctx = {
-  THREE, Mechanism: require('./advanced-kinematics.js'), pose: require('./advanced-kinematics.js').pose,
+  THREE, Mechanism: require('../advanced-kinematics.js'), pose: require('../advanced-kinematics.js').pose,
   scene: new THREE.Group(), window: {}, powerLost: false, serviceOpen: false,
   silver: mat, dark: mat, white: mat, rubber: mat, glass: mat,
   drivePulleys: [], driveGears: [], screws: [], shellParts: [], fixedGuards: [],

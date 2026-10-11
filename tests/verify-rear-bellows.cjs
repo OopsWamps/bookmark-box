@@ -1,7 +1,7 @@
 // Regression for the actual rendered rear bellows triangles against rear parts.
 // This is a geometry-only check, with neither fabrication tolerances nor loads.
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const THREE=require('./assets/three.min.js'),M=require('./advanced-kinematics.js');
+const THREE=require('../assets/three.min.js'),M=require('../advanced-kinematics.js');
 const base=fs.readFileSync('lowbox-renderer.js','utf8'),source=fs.readFileSync('advanced-renderer.js','utf8');
 const helpers=base.slice(0,base.indexOf('function buildLowBox(){'))+base.slice(base.indexOf('function xBearingPlate'),base.indexOf('function updateLowBox'));
 const mat=new THREE.MeshBasicMaterial(),parts=[];

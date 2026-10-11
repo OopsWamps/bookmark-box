@@ -59,6 +59,6 @@ let scene=read('scene.js')
 insert('<!-- SCENE_SCRIPT -->','<script>\n'+read('advanced-kinematics.js')+'\n'+scene+'\n</script>');
 insert('</head>','<link rel="icon" href="data:,">\n</head>');
 html=html.replace(/^[ \t]+$/gm,'');
-fs.writeFileSync('advanced-scene.generated.js',scene);
+fs.mkdirSync('output',{recursive:true});fs.writeFileSync('output/advanced-scene.generated.js',scene);
 fs.writeFileSync('书签收纳盒-凸轮倾斜高级版.html',html);
 console.log('Built standalone advanced HTML: '+Buffer.byteLength(html)+' bytes');

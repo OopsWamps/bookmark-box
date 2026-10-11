@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');
-const {D,pose,coverPath}=require('./kinematics.js');
+const {D,pose,coverPath}=require('../kinematics.js');
 const close=(a,b,m)=>assert(Math.abs(a-b)<1e-7,m);
 assert.deepEqual([D.boxW,D.boxD,D.boxH],[300,222,110]);assert.equal(D.lift,60);
 assert(D.trayWidth/2-112>=10,'all four original 50 mm cards retain 10 mm side margin');

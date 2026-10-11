@@ -70,17 +70,17 @@ node build.cjs
 node build-advanced.cjs
 ```
 
-高级版构建生成 `书签收纳盒-凸轮倾斜高级版.html`，同时生成本地调试用的 `advanced-scene.generated.js`。
+高级版构建生成 `书签收纳盒-凸轮倾斜高级版.html`，同时生成本地调试用的 `output/advanced-scene.generated.js`。
 
 ## 验证
 
 以下脚本使用 Node.js 与仓库内的三维库，不需要另装软件包。部分校核结果写入本地 `output/` 目录，其余输出到终端。
 
 ```sh
-node verify-kinematics.cjs
-node verify-advanced-kinematics.cjs
-node verify-advanced-assembly.cjs
-node verify-rear-bellows.cjs
+node tests/verify-kinematics.cjs
+node tests/verify-advanced-kinematics.cjs
+node tests/verify-advanced-assembly.cjs
+node tests/verify-rear-bellows.cjs
 ```
 
 这些检查覆盖基础运动、高级版槽曲线、选定装配包络，以及实际柔性罩三角面与后部构件的干涉回归。检查范围和指标保留在脚本中，不能据此推断所有零件之间都无干涉。

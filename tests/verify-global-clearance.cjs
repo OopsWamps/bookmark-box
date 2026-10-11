@@ -8,8 +8,8 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
-const THREE = require('./assets/three.min.js');
-const M = require('./advanced-kinematics.js');
+const THREE = require('../assets/three.min.js');
+const M = require('../advanced-kinematics.js');
 
 const mat = new THREE.MeshBasicMaterial();
 const ctx = {

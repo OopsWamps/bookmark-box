@@ -18,13 +18,15 @@
 **任何设计源文件修改之后、git 提交之前，以下脚本必须全部运行且全部通过：**
 
 ```sh
-node verify-kinematics.cjs             # 基础运动/膜卷几何
-node verify-advanced-kinematics.cjs    # 高级槽曲线、压力角、间隙、膜长守恒
-node verify-advanced-assembly.cjs      # 装配包络与连接件搭接
-node verify-rear-bellows.cjs           # 后柔性罩干涉回归
-node verify-safety-devices.cjs         # D5-2 安全构件包络/啮合/存在性
-node verify-global-clearance.cjs       # 全零件跨组碰撞扫掠（白名单门禁）
+node tests/verify-kinematics.cjs             # 基础运动/膜卷几何
+node tests/verify-advanced-kinematics.cjs    # 高级槽曲线、压力角、间隙、膜长守恒
+node tests/verify-advanced-assembly.cjs      # 装配包络与连接件搭接
+node tests/verify-rear-bellows.cjs           # 后柔性罩干涉回归
+node tests/verify-safety-devices.cjs         # D5-2 安全构件包络/啮合/存在性
+node tests/verify-global-clearance.cjs       # 全零件跨组碰撞扫掠（白名单门禁）
 ```
+
+六个脚本位于 `tests/`，必须从仓库根目录运行——脚本以当前工作目录读取源文件、写 `output/` 结果。
 
 任何一个脚本失败或新增未知接触，都不得提交、不得声称设计"已验证"；修复后重跑。只改注释、文档、`design/` 记录可豁免，但要在汇报里说明豁免理由。
 

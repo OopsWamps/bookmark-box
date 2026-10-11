@@ -1,7 +1,7 @@
 // Independent checks of the implemented single-input advanced motion. No physical safety certification.
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const {D,advancedConstants:A,pose,coverPath,transformPoint,camAtLift,camCenterline,rollGeometry}=require('./advanced-kinematics.js');
+const {D,advancedConstants:A,pose,coverPath,transformPoint,camAtLift,camCenterline,rollGeometry}=require('../advanced-kinematics.js');
 const close=(a,b,m)=>assert(Math.abs(a-b)<1e-8,m+': '+a+' vs '+b);
 assert.deepEqual([D.boxW,D.boxD,D.boxH],[300,222,110]);
 assert.equal(D.spoolY,72);assert.equal(D.spoolZ,66);
